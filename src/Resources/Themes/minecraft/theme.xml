@@ -27,6 +27,38 @@
 			<color>#FF0000</color>
 			<image>wall3.png</image>
 		</celltype>
+		<celltype id="minecraft_wall4">
+			<name>Wall 4</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall4.png</image>
+		</celltype>
+		<celltype id="minecraft_wall5">
+			<name>Wall 5</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall5.png</image>
+		</celltype>
+		<celltype id="minecraft_wall6">
+			<name>Wall 6</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall6.png</image>
+		</celltype>
+		<celltype id="minecraft_wall7">
+			<name>Wall 7</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall7.png</image>
+		</celltype>
 		<celltype id="minecraft_floor1">
 			<name>Floor 1</name>
 			<width>1</width>
@@ -50,6 +82,82 @@
 			<clip>false</clip>
 			<color>#FFFFFF</color>
 			<image>floor3.png</image>
+		</celltype>
+		<celltype id="minecraft_floor4">
+			<name>Floor 4</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>false</clip>
+			<color>#FFFFFF</color>
+			<image>floor4.png</image>
+		</celltype>
+		<celltype id="minecraft_floor5">
+			<name>Floor 5</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>false</clip>
+			<color>#FFFFFF</color>
+			<image>floor5.png</image>
+		</celltype>
+		<celltype id="minecraft_floor6">
+			<name>Floor 6</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>false</clip>
+			<color>#FFFFFF</color>
+			<image>floor6.png</image>
+		</celltype>
+		<celltype id="minecraft_floor7">
+			<name>Floor 7</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>false</clip>
+			<color>#FFFFFF</color>
+			<image>floor7.png</image>
+		</celltype>
+		<celltype id="minecraft_floor8">
+			<name>Floor 8</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>false</clip>
+			<color>#FFFFFF</color>
+			<image>floor8.png</image>
+		</celltype>
+		<celltype id="minecraft_coin1">
+			<name>Coin 1</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>false</clip>
+			<color>#FFFFFF</color>
+			<image>coin1.png</image>
+			<coin>floor1</coin>
+		</celltype>
+		<celltype id="minecraft_coin2">
+			<name>Coin 2</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>false</clip>
+			<color>#FFFFFF</color>
+			<image>coin2.png</image>
+			<coin>floor2</coin>
+		</celltype>
+		<celltype id="minecraft_coin3">
+			<name>Coin 3</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>false</clip>
+			<color>#FFFFFF</color>
+			<image>coin3.png</image>
+			<coin>floor3</coin>
+		</celltype>
+		<celltype id="minecraft_coin4">
+			<name>Coin 4</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>false</clip>
+			<color>#FFFFFF</color>
+			<image>coin4.png</image>
+			<coin>floor4</coin>
 		</celltype>
 	</celltypes>
 </theme>

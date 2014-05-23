@@ -36,69 +36,26 @@ import robotsimulator.worldobject.Block;
  */
 public class Simulator implements RobotListener 
 {
-	private MainApplet mainApp;
+	public MainApplet mainApp;
 	
 	private World world;
 	private Robot robot;
     
 	private static String newline = "\n";
 	
-	public int guiWidth = 32;
-	public int guiHeight = 32;
+	public int guiWidth;
+	public int guiHeight;
 	int guiFPS = 60;
-	public String themeid = "default";
+	public String themeid;
         public byte[] coinBytes;
 	
 	public boolean running = false;
     
 	public Simulator(MainApplet m)
-	{
-                //Defining robot parameters
-		int centerX = 100;
-		int centerY = 100;
-		int angle = 0;
-		robot = new Robot(centerX, centerY, angle, this);
-
-		int sonarLen = 750;
-		int fov = 25;
-
-		//THESE SHOULD BE ADDED IN CLOCKWISE STARTING FROM FRONT-LEFT
-		robot.addSonar(this, "Front-Left", robot.getX0(), robot.getY0(), sonarLen, 315, fov);
-		robot.addSonar(this, "Front", robot.getCenterFrontX(), robot.getCenterFrontY(), sonarLen, 0, fov);
-		robot.addSonar(this, "Front-Right", robot.getX1(), robot.getY1(), sonarLen, 45, fov);
-		robot.addSonar(this, "Right", robot.getCenterRightX(), robot.getCenterRightY(), sonarLen, 90, fov);
-		robot.addSonar(this, "Rear", robot.getCenterRearX(), robot.getCenterRearY(), sonarLen, 180, fov);
-		robot.addSonar(this, "Left", robot.getCenterLeftX(), robot.getCenterLeftY(), sonarLen, 270, fov);
-			
-                //Defining world parameters
-		world = new World(guiWidth, guiHeight, this);
-		world.setTheme(themeid);
-        
-		mainApp = m;
-                
-                try
-                {
-                    URL uri = new URL("http://themushroomkingdom.net/sounds/wav/smw/smw_coin.wav");
-                    URLConnection urlc = uri.openConnection();
-                    InputStream is = (InputStream)urlc.getInputStream();
-                     // Get the size of the file
-                    long streamLength = is.available();
-
-                     // Create the byte array to hold the data
-                    coinBytes = new byte[(int) streamLength];
-
-                     // Read in the bytes
-                    int offset = 0;
-                    int numRead = 0;
-                    while (offset < coinBytes.length && (numRead = is.read(coinBytes, offset, coinBytes.length - offset)) >= 0) 
-                    {
-                        offset += numRead;
-                    }
-                }
-                catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
+	{	
+            RobotSimulator.println("Importing maze from web");
+            importStage(m.mazeXml);
+            mainApp = m;
 	}
 	
 	public Robot getRobot()
@@ -237,7 +194,7 @@ public class Simulator implements RobotListener
 	public void error(String var, String e) {
 		System.out.println(e);		
 	}
-	
+        
     //Loads in a maze from the given file
 	public void importStage(String x)
 	{
@@ -264,7 +221,9 @@ public class Simulator implements RobotListener
                 Node robotXNode = (((NodeList)xpath.compile("x").evaluate(robotNode, XPathConstants.NODESET))).item(0);
                 Node robotYNode = (((NodeList)xpath.compile("y").evaluate(robotNode, XPathConstants.NODESET))).item(0);
                 Node robotANode = (((NodeList)xpath.compile("a").evaluate(robotNode, XPathConstants.NODESET))).item(0);
+                Node robotSonars = (((NodeList)xpath.compile("sonars").evaluate(robotNode, XPathConstants.NODESET))).item(0);
 
+                RobotSimulator.println("Building robot");
                 //Redefine the robot
                 robot = new Robot(
                     (int)Math.round(Double.parseDouble(robotXNode.getTextContent())), 
@@ -272,6 +231,17 @@ public class Simulator implements RobotListener
                     (int)Math.round(Double.parseDouble(robotANode.getTextContent())), 
                     this
                 );
+                
+                TransformerFactory tf = TransformerFactory.newInstance();
+                Transformer transformer = tf.newTransformer();
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+                StringWriter writer = new StringWriter();
+                transformer.transform(new DOMSource(robotSonars), new StreamResult(writer));
+                String loadoutXml = writer.getBuffer().toString().replaceAll("\n|\r", ""); 
+                
+                RobotSimulator.println("Setting up robot loadout");
+                //mainApp.configFile = loadoutXml;
+                importLoadout(loadoutXml);
 
                 //Collect world attributes
                 Node worldNode = ((NodeList)xpath.compile("world").evaluate(root, XPathConstants.NODESET)).item(0);
@@ -282,11 +252,14 @@ public class Simulator implements RobotListener
                 guiHeight = Integer.parseInt(guiHeightNode.getNodeValue());
                 world = new World(guiWidth, guiHeight, this);
                 world.setGridWidth(Integer.parseInt(worldGridWidthNode.getTextContent()));
-                world.setGridHeight(Integer.parseInt(worldGridHeighthNode.getTextContent()));               
+                world.setGridHeight(Integer.parseInt(worldGridHeighthNode.getTextContent())); 
+                
+                RobotSimulator.println("Creating world");
                 world.setTheme(themeIDNode.getNodeValue());
                 
 
                 //Add objects to the world
+                RobotSimulator.println("Adding object to world");
                 NodeList cellNodes = ((NodeList)xpath.compile("cells/cell").evaluate(worldNode, XPathConstants.NODESET));
                 for(int i = 0; i < cellNodes.getLength(); i++)
                 {
@@ -365,10 +338,7 @@ public class Simulator implements RobotListener
                     XPathFactory xPathFactory = XPathFactory.newInstance();
                     XPath xpath = xPathFactory.newXPath();
 		    
-		    //Reset the robot, but keep it in the same place and orientation
-                    robot = new Robot((int)robot.getCenterX(), (int)robot.getCenterY(), (int)robot.getAngle(), this);
-		    
-		    NodeList sonarNodes = ((NodeList)xpath.compile("sonars/sonar").evaluate(root, XPathConstants.NODESET));
+		    NodeList sonarNodes = ((NodeList)xpath.compile("sonar").evaluate(root, XPathConstants.NODESET));
 
 		    for(int i = 0; i < sonarNodes.getLength(); i++)
 		    {
@@ -382,7 +352,7 @@ public class Simulator implements RobotListener
 			    char sonarType = sonarTypeNode.getTextContent().charAt(0);
 			    if(sonarType == 'l')
 			    {
-					robot.addSonar(
+					robot.addSonarAbsolute(
 							this, 
 							sonarNameNode.getTextContent(), 
 							Double.parseDouble(sonarXNode.getTextContent()),
@@ -395,7 +365,7 @@ public class Simulator implements RobotListener
 			    else if(sonarType == 'c')
 			    {
 				    Node sonarFOVNode = (((NodeList)xpath.compile("fov").evaluate(sonarNodes.item(i), XPathConstants.NODESET))).item(0);
-				    robot.addSonar(
+				    robot.addSonarAbsolute(
 							this, 
 							sonarNameNode.getTextContent(), 
 							Double.parseDouble(sonarXNode.getTextContent()),

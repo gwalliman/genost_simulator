@@ -52,7 +52,7 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 	
 	//Components
 	//ButtonGrid
-	private JPanel leftPanel;
+	public JPanel topPanel;
 	private JButton openCodeBtn;			//Button for loading code from a file
 	private JLabel codeNameLbl;				//Label to display loaded code file name
 	private JButton openLoadoutBtn;			//Button for loading robot loadouts from a file
@@ -70,11 +70,12 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 	private JLabel speedLbl;                //Label to display current speed
 	
 	//Right Panel
-	private JPanel rightPanel;
+	private JPanel bottomPanel;
 	private JLabel runningLbl;				//Robot status-- running or not
 	private JTextArea outputTextArea;		//Holds output from running code, errors, etc.
 	private JTextArea sensorText;			//Refreshed with sensor data
-	private JPanel sensorPanel;				//Holds labels for sensor data
+	private JPanel sensorPanel;	
+        private JPanel stagePanel; //Holds labels for sensor data
 	
 	//Variables
 	private int width, height, fps;
@@ -96,7 +97,7 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 	//Whether all necessary files are loaded in-- i.e. can we execute?
 	private boolean readyToRun = false;
 	
-	private JPanel stagePanel;
+        public GridBagConstraints bottomConstraints;
 			
 	//File IO
 	private JFileChooser fileChooser;           //Call this to let users load files
@@ -125,79 +126,71 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 		GridBagConstraints leftSideConstraints = new GridBagConstraints();
 		leftSideConstraints.gridx = 0;
 		leftSideConstraints.gridy = 0;
-		leftSideConstraints.gridwidth = 3;
+		leftSideConstraints.gridheight = 3;
 		leftSideConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
-		leftSideConstraints.insets = new Insets(4, 4, 4, 4);
+		//leftSideConstraints.insets = new Insets(4, 4, 4, 4);
 		
 		//Controls size of right side-- status, output, sensor data, etc. 1/4 of panel
 		GridBagConstraints rightSideConstraints = new GridBagConstraints();
-		rightSideConstraints.gridx = GridBagConstraints.RELATIVE;
-                rightSideConstraints.gridy = 0;
-		rightSideConstraints.gridwidth = 1;
+		rightSideConstraints.gridx = 0;
+                rightSideConstraints.gridy = GridBagConstraints.RELATIVE;
+		rightSideConstraints.gridheight = 1;
 		rightSideConstraints.anchor = GridBagConstraints.FIRST_LINE_END;
-		rightSideConstraints.insets = new Insets(4, 4, 4, 4);
+		//rightSideConstraints.insets = new Insets(4, 4, 4, 4);
 		
-		leftPanel = createLeftPanel();
-		simPane.add(leftPanel, leftSideConstraints);
+		topPanel = createLeftPanel();
+		simPane.add(topPanel, leftSideConstraints);
 		
-		rightPanel = createRightPanel();
-		simPane.add(rightPanel, rightSideConstraints);
+		bottomPanel = createRightPanel();
+		simPane.add(bottomPanel, rightSideConstraints);
 
 		add(simPane);
-		
-		loadDefaults();		
-		//Start up the sensor thread
-                sThread = new sensorThread();
-                (new Thread(sThread)).start();
-	}
-	
-	//Load in default options-- default map, sensor loadout, and program
-	private void loadDefaults()
-	{
-		
-            //Gross procedure to serialize the resource file into a File object
-            String loadoutXml = getLoadoutData("DefaultLoadout");
-            loadoutNameLbl.setText("Current Config: " + "DefaultLoadout.xml");
-            main.configFile = loadoutXml;
-		
-            //Update the robot's sensor and loadout configuration
-            sim.importLoadout(main.configFile);
-            updateRunningStatus();
-            
-            //Load the initial code from the web service
-            loadCodeFromWeb();
 	}
 	
 	//Builds the left side of the window-- input buttons, stage, etc.
 	public JPanel createLeftPanel()
 	{
 		JPanel leftPanel = new JPanel(new GridBagLayout());
-		GridBagConstraints topConstraints = new GridBagConstraints();
-		topConstraints.gridx = 0;
-		topConstraints.gridy = 0;
-		topConstraints.gridheight = 1;
-		topConstraints.insets = new Insets(4, 4, 4, 4);
-		//Create button grid panel and add it with these constraints
-		leftPanel.add(createButtonGridPanel(), topConstraints);
 		
-		GridBagConstraints bottomConstraints = new GridBagConstraints();
+		
+		/*bottomConstraints = new GridBagConstraints();
 		bottomConstraints.gridx = 0;
 		bottomConstraints.gridy = GridBagConstraints.RELATIVE;
 		bottomConstraints.gridheight = 2;
-		bottomConstraints.insets = new Insets(4, 4, 4, 4);
+		bottomConstraints.insets = new Insets(4, 4, 4, 4);*/
+                
+                
+		//stagePanel.add(createStagePanel(stageWidth, stageHeight, fps, sim));
+                
 		//Create stage and add it with these constraints
-		stagePanel = Stage.createStagePanel(stageWidth, stageHeight, fps, sim, false);
-		leftPanel.add(stagePanel, bottomConstraints);
+		//leftPanel.add(stagePanel, bottomConstraints);
 		
 		return leftPanel;
 	}
+        
+        public void createStage(Simulator s)
+        {
+            stagePanel = new JPanel();
+            sim = s;
+            stagePanel.add(createStagePanel(stageWidth, stageHeight, fps, sim));
+                
+            //Create stage and add it with these constraints
+            topPanel.add(stagePanel, bottomConstraints);
+        }
+        
+        public void startSensorThread()
+        {
+            //Start up the sensor thread
+            sThread = new SimulatorPanel.sensorThread();
+            (new Thread(sThread)).start();
+        }
 	
 	public JPanel createButtonGridPanel()
 	{
 		//define 4x2 grid
-		GridLayout g = new GridLayout(4, 2, 20, 4);
+		GridLayout g = new GridLayout(1, 0);
 		JPanel bGridPanel = new JPanel(g);
-		bGridPanel.setSize(new Dimension(600, 100));
+		//bGridPanel.setSize(new Dimension(600, 100));
 		//Add buttons and labels to it as needed
 		openCodeBtn = new JButton("Load Program");
 		openCodeBtn.addActionListener(this);
@@ -210,7 +203,8 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 		openMazeBtn.addActionListener(this);
 		bGridPanel.add(openMazeBtn);*/
                 
-                openMazeList = new JComboBox(getMazesFromWeb());
+                openMazeList = new JComboBox(main.getMazesFromWeb());
+                openMazeList.setSelectedItem(main.mazeId);
                 openMazeList.addActionListener(this);
                 bGridPanel.add(openMazeList);
 		
@@ -248,8 +242,10 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 	//Builds the right side of the window-- status, output, sensor data, etc.
 	public JPanel createRightPanel()
 	{
+
+                
 		JPanel rightPanel = new JPanel(new GridBagLayout());
-		rightPanel.setSize(200, 600);
+		//rightPanel.setSize(200, 600);
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.anchor = GridBagConstraints.PAGE_START;
@@ -257,12 +253,20 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 		c.gridheight = 1;
 		//Add 'robot status' label
 		JLabel statusLbl = new JLabel("Robot Status");
-		rightPanel.add(statusLbl, c);
+		//rightPanel.add(statusLbl, c);
 		
+                GridBagConstraints topConstraints = new GridBagConstraints();
+		topConstraints.gridx = 0;
+		topConstraints.gridy = 0;
+		topConstraints.gridheight = 1;
+		topConstraints.insets = new Insets(4, 4, 4, 4);
+		//Create button grid panel and add it with these constraints
+		rightPanel.add(createButtonGridPanel(), topConstraints);
+                
 		c.gridheight = 1;
 		//add 'running/not running' label
 		runningLbl = new JLabel("Waiting for Program...");
-		rightPanel.add(runningLbl, c);
+		//rightPanel.add(runningLbl, c);
 		
 		c.gridheight = 2;
 		c.insets = new Insets(4, 4, 4, 4);
@@ -281,13 +285,13 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 		
 		reloadCodeBtn = new JButton("Reload Code from Text");
 		reloadCodeBtn.addActionListener(this);		
-		actionPanel.add(reloadCodeBtn);
+		//actionPanel.add(reloadCodeBtn);
 		
 		webloadCodeBtn = new JButton("Load Code from Web");
 		webloadCodeBtn.addActionListener(this);
 		actionPanel.add(webloadCodeBtn);
 		
-		rightPanel.add(actionPanel, c);
+		//rightPanel.add(actionPanel, c);
 
 		//Experimental speed toggle!
                 //Can later replace this with a slider
@@ -297,7 +301,7 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 
 		speedBtn = new JButton("Toggle Speed");
 		speedBtn.addActionListener(this);
-		speedPanel.add(speedBtn);
+                speedPanel.add(speedBtn);
 		
 		speedLbl = new JLabel("Speed: Slow");
 		speedPanel.add(speedLbl);
@@ -346,19 +350,19 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 		runBtn.setEnabled(false);
 		openLoadoutBtn.setEnabled(false);
 		
-		if (main.codeFile == null)
+		if (main.code == null)
 			{
 				runningLbl.setText("Waiting for Program...");
 			}
-		else if (main.mapData == null)
+		else if (main.mazeId == null)
 			{
 				runningLbl.setText("Waiting for maze file...");
 			}
-		else if (main.configFile == null)
+		/*else if (main.configFile == null)
 			{
 				openLoadoutBtn.setEnabled(true);
 				runningLbl.setText("Waiting for robot configuration...");
-			}
+			}*/
 		else
 			{
 				runningLbl.setText("Ready!");	
@@ -382,7 +386,12 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 		}
 		else if (e.getSource() == openMazeList)
 		{
-                    openNewMaze(null);
+                    //main.openNewMaze();
+                    JComboBox jcb = (JComboBox) e.getSource();
+                    main.mazeId = (String) jcb.getSelectedItem();
+                    main.mazeXml = sim.mainApp.getMazeData(main.mazeId);
+                    sim.importStage(main.mazeXml);
+                    reinitializeSensors();
 		}
 		else if (e.getSource() == runBtn)
 		{
@@ -449,9 +458,9 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 			//Stop execution, and reload the maze
 			stopExecution();
 			
-			if (main.mapData != null)
+			if (main.mazeId != null)
 			{
-				sim.importStage(main.mapData);
+				sim.importStage(main.mazeXml);
 				reinitializeSensors();
 			}
 		}
@@ -463,8 +472,7 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 		else if (e.getSource() == webloadCodeBtn)
 		{
 			//Loads the program from the web service
-                    loadCodeFromWeb();
-                    openNewMaze(main.mapData);
+                    main.loadCodeFromWeb();
 		}
 		else if (e.getSource() == speedBtn)
 		{
@@ -484,31 +492,6 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 			}
 		}
 	}
-	
-    //Calls the web service and loads in the code file from the web
-    public void loadCodeFromWeb()
-    {
-        String webdata = getCode();
-        String[] splitWebData = webdata.split("%", 2);
-
-        String code;
-        if(splitWebData.length == 2)
-        {
-            String mazeID = splitWebData[0];
-            code = splitWebData[1];
-            
-            List<String> validMazes = Arrays.asList(getMazesFromWeb());
-            if(validMazes.contains(mazeID))
-            {
-                main.mapData = mazeID;
-            }
-        }
-        else
-        {
-            code = splitWebData[0];
-        }
-        loadCodefromText(code, "Loaded from Web*");
-    }
     
 	public void stopExecution()
 	{
@@ -530,7 +513,7 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 	{
 		
             //Convert 'code' to a file and load the code in from there
-            	main.codeFile = code;
+            	main.code = code;
 		codeNameLbl.setText("Current Program: " + newCodeName);
 		
 		runBtn.setEnabled(true);
@@ -545,7 +528,7 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 		try 
 		{
                     outputTextArea.setText(null);
-                    outputTextArea.append(main.codeFile);
+                    outputTextArea.append(main.code);
 		}
 		catch (Exception e) 
 		{
@@ -557,7 +540,7 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 	{
 		stageWidth = width;
 		stageHeight = height;
-		stagePanel = Stage.createStagePanel(width, height, fps, sim, false);
+		stagePanel = createStagePanel(width, height, fps, sim);
 		sim.getWorld().setGridWidth(width);
 		sim.getWorld().setGridHeight(height);
 	}
@@ -565,18 +548,15 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 	//Hacky method to reinitialize sensors and have them work again after the maze has changed
 	public void reinitializeSensors()
 	{
-		if (main.configFile != null)
-			sim.importLoadout(main.configFile);	
-		
 		//Pause the sensor thread
 		stopSensorThread();
 		
 		//Also update the sensor panel
-		rightPanel.remove(sensorPanel);
+		bottomPanel.remove(sensorPanel);
 		sensorPanel = null;
 		sensorPanel = createSensorPanel();
-		rightPanel.add(sensorPanel);
-		rightPanel.revalidate();
+		bottomPanel.add(sensorPanel);
+		bottomPanel.revalidate();
 		
 		//Resume the sensor thread
 		resumeSensorThread();
@@ -640,227 +620,26 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 			}
 		}
 	}
-
-    //Autogenerated by Netbeans to call the code service
-    private String getCode() 
-    {
-        try
-        {
-            /*org.tempuri.Service service = new org.tempuri.Service();            //* Autogen'd
-            org.tempuri.IService port = service.getBasicHttpBindingIService();  //* Autogen'd
-            return port.getCode();                                              //* Autogen'd*/
-            
-            String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/codeRestSvc/Service.svc/GetCode/";
-            if(main.codeId != null && main.codeId != "")
-            {
-                uri = uri + main.codeId;
-            }
-            else
-            {
-                uri = uri + "asdf123";
-            }
-            
-            try
-            {
-                URL url = new URL(uri);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                conn.setRequestProperty("Accept","application/xml");
-
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder builder = factory.newDocumentBuilder();
-
-                Document document = builder.parse(conn.getInputStream());
-                Element root = document.getDocumentElement();
-                
-                Node child = root.getFirstChild();
-                if (child instanceof CharacterData) {
-                    CharacterData cd = (CharacterData) child;
-                    return cd.getData();
-                }
-            }
-            catch(Exception e2)
-            {
-                e2.printStackTrace();
-            }
-
-            return null;
-        }
-        catch (Exception e)
-        {
-            RobotSimulator.println("Couldn't load code from web. ");
-            return "Couldn't load code from web. ";
-        }
-    }
-
-    public String[] getMazesFromWeb()
-    {
-        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/listMazes";
-        try
-        {
-            URL url = new URL(uri);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept","application/json");
-            InputStream is = conn.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            
-            JSONParser jsonParser = new JSONParser();
-            JSONArray jsonArray = (JSONArray) jsonParser.parse(isr);
-            ArrayList<String> mazeList = new ArrayList<String>();
-            for(int x = 0; x < jsonArray.size(); x++)
-            {
-                mazeList.add((String) jsonArray.get(x));
-            }
-            
-            return mazeList.toArray(new String[mazeList.size()]);
-        }
-        catch(Exception e2)
-        {
-            e2.printStackTrace();
-        }
-        
-        return null;
-    }
-    
-    public void openNewMaze(String mazeId)
-    {
-        if(mazeId == null)
-        {
-            mazeId = getSelectedMaze();
-        }
-        String mazeXml = getMazeData(mazeId);
-
-        if (mazeXml != null)
-        {
-            main.mapData = mazeXml;
-            mazeNameLbl.setText("Current Maze: " + mazeId);
-            updateRunningStatus();
-
-            //Update the maze here
-            sim.importStage(main.mapData);
-            reinitializeSensors();
-
-            //Also signal to mazebuilder to update its displays
-            if (!MainApplet.studentBuild)
-            {
-                main.mazePanel.refreshMazeSettings();
-            }
-        }
-    }
-    
-    public String getMazeData(String mazeId)
-    {
-        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/getMaze/" + mazeId;
-        try
-        {
-            URL url = new URL(uri);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept","application/xml");
-            
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            
-            Document document = builder.parse(conn.getInputStream());
-            TransformerFactory tf = TransformerFactory.newInstance();
-            Transformer transformer = tf.newTransformer();
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            StringWriter writer = new StringWriter();
-            transformer.transform(new DOMSource(document), new StreamResult(writer));
-            String output = writer.getBuffer().toString().replaceAll("\n|\r", ""); 
-            
-            return output;
-        }
-        catch(Exception e2)
-        {
-            e2.printStackTrace();
-        }
-        
-        return null;
-    }
-    
-    public static String getLoadoutData(String loadoutId)
-    {
-        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/getLoadout/" + loadoutId;
-        try
-        {
-            URL url = new URL(uri);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept","application/xml");
-            
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            
-            Document document = builder.parse(conn.getInputStream());
-            TransformerFactory tf = TransformerFactory.newInstance();
-            Transformer transformer = tf.newTransformer();
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            StringWriter writer = new StringWriter();
-            transformer.transform(new DOMSource(document), new StreamResult(writer));
-            String output = writer.getBuffer().toString().replaceAll("\n|\r", ""); 
-            
-            return output;
-        }
-        catch(Exception e2)
-        {
-            e2.printStackTrace();
-        }
-        
-        return null;
-    }
-    
-    public static Document getThemeData(String themeId)
-    {
-        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/getTheme/" + themeId;
-        try
-        {
-            URL url = new URL(uri);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept","application/xml");
-            
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            
-            Document document = builder.parse(conn.getInputStream());
-            return document;
-        }
-        catch(Exception e2)
-        {
-            e2.printStackTrace();
-        }
-        
-        return null;
-    }
-    
-    public static InputStream getThemeImage(String themeId, String imageId)
-    {
-        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/getThemeImage/" + themeId + "/" + imageId;
-        try
-        {
-            URL url = new URL(uri);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept","application/xml");
-            
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            
-            return conn.getInputStream();
-        }
-        catch(Exception e2)
-        {
-            e2.printStackTrace();
-        }
-        
-        return null;
-    }
     
     private String getSelectedMaze()
     {
         return (String) openMazeList.getSelectedItem();
+    }
+    
+    //Creates a standard scrollable stage
+    //Use this any time you need to add a stage somewhere
+    public JPanel createStagePanel(int mazeWidth, int mazeHeight, int fps, Simulator sim)
+    {
+            JPanel sp = new JPanel();
+            Stage simStage = new Stage(mazeWidth * 2, mazeHeight * 2, fps, sim);
+
+            JScrollPane stageScroll = new JScrollPane(simStage);
+            stageScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            stageScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+            stageScroll.setSize(mazeWidth * 2, mazeHeight * 2);
+
+            sp.add(stageScroll);
+            return sp;
     }
 }
 

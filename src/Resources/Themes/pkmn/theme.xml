@@ -27,6 +27,150 @@
 			<color>#FF0000</color>
 			<image>wall3.png</image>
 		</celltype>
+		<celltype id="pkmn_wall4">
+			<name>Mountain 1</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall4.png</image>
+		</celltype>
+		<celltype id="pkmn_wall5">
+			<name>Mountain 2</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall5.png</image>
+		</celltype>
+		<celltype id="pkmn_wall6">
+			<name>Mountain 3</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall6.png</image>
+		</celltype>
+		<celltype id="pkmn_wall7">
+			<name>Mountain 4</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall7.png</image>
+		</celltype>
+		<celltype id="pkmn_wall8">
+			<name>Mountain 8</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall8.png</image>
+		</celltype>
+		<celltype id="pkmn_wall9">
+			<name>Mountain 9</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall9.png</image>
+		</celltype>
+		<celltype id="pkmn_wall10">
+			<name>Coast 1</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall10.png</image>
+		</celltype>
+		<celltype id="pkmn_wall11">
+			<name>Coast 2</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall11.png</image>
+		</celltype>
+		<celltype id="pkmn_wall12">
+			<name>Coast 3</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall12.png</image>
+		</celltype>
+		<celltype id="pkmn_wall13">
+			<name>Coast 4</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall13.png</image>
+		</celltype>
+		<celltype id="pkmn_wall14">
+			<name>Coast 5</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall14.png</image>
+		</celltype>
+		<celltype id="pkmn_wall15">
+			<name>Coast 6</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall15.png</image>
+		</celltype>
+		<celltype id="pkmn_wall16">
+			<name>Water</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall16.png</image>
+		</celltype>
+		<celltype id="pkmn_wall17">
+			<name>Wall 4</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall17.png</image>
+		</celltype>
+		<celltype id="pkmn_wall18">
+			<name>Wall 5</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall18.png</image>
+		</celltype>
+		<celltype id="pkmn_wall19">
+			<name>Mountain 8</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall19.png</image>
+		</celltype>
+		<celltype id="pkmn_wall20">
+			<name>Mountain 9</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall12.png</image>
+		</celltype>
+		<celltype id="pkmn_wall21">
+			<name>Mountain 10</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#FF0000</color>
+			<image>wall21.png</image>
+		</celltype>
 		<celltype id="pkmn_floor1">
 			<name>Floor 1</name>
 			<width>1</width>
@@ -50,6 +194,22 @@
 			<clip>false</clip>
 			<color>#FFFFFF</color>
 			<image>floor3.png</image>
+		</celltype>
+		<celltype id="pkmn_floor4">
+			<name>Floor 4</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>false</clip>
+			<color>#FFFFFF</color>
+			<image>floor4.png</image>
+		</celltype>
+		<celltype id="pkmn_floor5">
+			<name>Floor 5</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>false</clip>
+			<color>#FFFFFF</color>
+			<image>floor5.png</image>
 		</celltype>
 		<celltype id="pkmn_coin">
 			<name>Coin</name>

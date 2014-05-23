@@ -55,12 +55,22 @@ public class Robot implements Runnable
 	
 	public void addSonar(Simulator s, String n, double x, double y, int l, int a)
 	{
-		sonars.add(new SonarSensor(s, n, x + b.getCenterX(), y + b.getCenterY(), l, a));
+		sonars.add(new SonarSensor(s, n, x + b.getCenterX(), y + b.getCenterY(), l, a, false));
 	}
 	
 	public void addSonar(Simulator s, String n, double x, double y, int l, int a, int fov)
 	{
-		sonars.add(new SonarSensor(s, n, x + b.getCenterX(), y + b.getCenterY(), l, a, fov));
+		sonars.add(new SonarSensor(s, n, x + b.getCenterX(), y + b.getCenterY(), l, a, fov, false));
+	}
+        
+        public void addSonarAbsolute(Simulator s, String n, double x, double y, int l, int a)
+	{
+		sonars.add(new SonarSensor(s, n, x, y, l, a, true));
+	}
+        
+        public void addSonarAbsolute(Simulator s, String n, double x, double y, int l, int a, int fov)
+	{
+		sonars.add(new SonarSensor(s, n, x, y, l, a, fov, true));
 	}
 	
 	public SonarSensor getSonarSensor(int num) 

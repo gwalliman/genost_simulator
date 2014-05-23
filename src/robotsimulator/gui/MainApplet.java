@@ -5,7 +5,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import javax.swing.AbstractAction;
@@ -16,6 +23,19 @@ import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.w3c.dom.CharacterData;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import robotsimulator.RobotSimulator;
 import robotsimulator.Simulator;
 import static robotsimulator.gui.MainApplet.m_instance;
@@ -40,12 +60,13 @@ public class MainApplet extends JApplet implements ChangeListener {
 	private JTabbedPane tabPane;
 	private Simulator sim;
 	public SimulatorPanel simPanel;
-	public MazeBuilderPanel mazePanel;
 	
 	//IO variables
-	public String codeFile;
+	public String code;
 	public String configFile;
-	public String mapData;
+	public String mazeId;
+        public String mazeXml;
+        public String robotXml;
         
         public String codeId;
 	
@@ -80,58 +101,45 @@ public class MainApplet extends JApplet implements ChangeListener {
             {
                 e.printStackTrace();
             }
+            finally
+            {
+                if(codeId == null || codeId.equals(""))
+                    codeId =  "default";
+            }
             
+            RobotSimulator.println("Loading in code from web");
+            loadCodeFromWeb();
+            mazeXml = getMazeData(mazeId);
             //Create a static reference to the applet if none exists
             if (m_instance == null)
                     m_instance = this;
-
+            
+            RobotSimulator.println("Building GUI.");
+            buildGUI();
+            
+            RobotSimulator.println("Launching simulator");
             sim = new Simulator(this);
+            
+            RobotSimulator.println("Setting up stage");
+            simPanel.createStage(sim);
+            simPanel.loadCodefromText(code, "Loaded from Web*");
+            
+            //Start sensor thread
+            RobotSimulator.println("Starting sensors");
+            simPanel.startSensorThread();
+            
+            RobotSimulator.println("We are go for launch");
 
             if (!studentBuild)
                     setKeyBindings();
-
-            try 
-            {
-                    javax.swing.SwingUtilities.invokeAndWait(new Runnable()
-                    {
-                            public void run()
-                            {
-                                    buildGUI();
-                            }
-                    });
-            }
-            catch (Exception e)
-            {
-                    System.err.println("[ERROR]: Couldn't construct the GUI.");
-                    e.printStackTrace();
-            }
-
-            try
-            {
-                InputStream is = loadSprite("default", "robot");
-                ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
-                int reads = is.read(); 
-                while(reads != -1)
-                { 
-                    baos.write(reads); 
-                    reads = is.read(); 
-                }
-                robotSprite = new ImageIcon(baos.toByteArray());
-            }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-            }
-            
-            simPanel.openNewMaze(mapData);
-	}
+        }
 	
 	public static InputStream loadSprite(String themeId, String imageId)
 	{
 		//Load the sprite from the resources folder in the jar
 		try
 		{
-                    InputStream is = SimulatorPanel.getThemeImage(themeId, imageId);
+                    InputStream is = getThemeImage(themeId, imageId);
                     return is;
 		}
 		catch (Exception e)
@@ -150,15 +158,15 @@ public class MainApplet extends JApplet implements ChangeListener {
         
 		//Remove the default keyboard shortcuts for tabs-- conflicts with robot manual control
 		tabPane.setActionMap(null);
-		tabPane.addChangeListener(this);
+		//tabPane.addChangeListener(this);
 		
 		simPanel = new SimulatorPanel(width, height, fps, sim, this);
                 tabPane.addTab("Simulator", simPanel);
 		
-		mazePanel = new MazeBuilderPanel(fps, sim, this);
+		//mazePanel = new MazeBuilderPanel(fps, sim, this);
                 //Add in the maze builder tab if we're not using a student build
-		if (!studentBuild)
-			tabPane.addTab("Maze Builder", mazePanel);
+		//if (!studentBuild)
+			//tabPane.addTab("Maze Builder", mazePanel);
 				
 		add(tabPane);
 	}
@@ -281,5 +289,245 @@ public class MainApplet extends JApplet implements ChangeListener {
 			simPanel.stopSensorThread();
 			//sim.stop();
 		}
-	}	
+	}
+        
+        //Autogenerated by Netbeans to call the code service
+    public String getCode() 
+    {
+        try
+        {
+            /*org.tempuri.Service service = new org.tempuri.Service();            //* Autogen'd
+            org.tempuri.IService port = service.getBasicHttpBindingIService();  //* Autogen'd
+            return port.getCode();                                              //* Autogen'd*/
+            
+            String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/codeRestSvc/Service.svc/GetCode/";
+            if(codeId != null && codeId != "")
+            {
+                uri = uri + codeId;
+            }
+            else
+            {
+                uri = uri + "asdf123";
+            }
+            
+            try
+            {
+                URL url = new URL(uri);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Accept","application/xml");
+
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+
+                Document document = builder.parse(conn.getInputStream());
+                Element root = document.getDocumentElement();
+                
+                Node child = root.getFirstChild();
+                if (child instanceof CharacterData) {
+                    CharacterData cd = (CharacterData) child;
+                    return cd.getData();
+                }
+            }
+            catch(Exception e2)
+            {
+                e2.printStackTrace();
+            }
+
+            return null;
+        }
+        catch (Exception e)
+        {
+            RobotSimulator.println("Couldn't load code from web. ");
+            return "Couldn't load code from web. ";
+        }
+    }
+
+    public String[] getMazesFromWeb()
+    {
+        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/listMazes";
+        try
+        {
+            URL url = new URL(uri);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept","application/json");
+            InputStream is = conn.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            
+            JSONParser jsonParser = new JSONParser();
+            JSONArray jsonArray = (JSONArray) jsonParser.parse(isr);
+            ArrayList<String> mazeList = new ArrayList<String>();
+            for(int x = 0; x < jsonArray.size(); x++)
+            {
+                mazeList.add((String) jsonArray.get(x));
+            }
+            
+            return mazeList.toArray(new String[mazeList.size()]);
+        }
+        catch(Exception e2)
+        {
+            e2.printStackTrace();
+        }
+        
+        return null;
+    }
+    
+    public void openNewMaze()
+    {
+        /*if(mazeId == null)
+        {
+            mazeId = getSelectedMaze();
+        }
+        String mazeXml = getMazeData(mazeId);
+
+        if (mazeXml != null)
+        {
+            mapData = mazeXml;
+            mazeNameLbl.setText("Current Maze: " + mazeId);
+            updateRunningStatus();
+
+            //Update the maze here
+            sim.importStage(main.mapData);
+            reinitializeSensors();
+
+            //Also signal to mazebuilder to update its displays
+            if (!MainApplet.studentBuild)
+            {
+                main.mazePanel.refreshMazeSettings();
+            }
+        }*/
+    }
+    
+    public String getMazeData(String mazeId)
+    {
+        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/getMaze/" + mazeId;
+        try
+        {
+            URL url = new URL(uri);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept","application/xml");
+            
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            
+            Document document = builder.parse(conn.getInputStream());
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            StringWriter writer = new StringWriter();
+            transformer.transform(new DOMSource(document), new StreamResult(writer));
+            String output = writer.getBuffer().toString().replaceAll("\n|\r", ""); 
+            
+            return output;
+        }
+        catch(Exception e2)
+        {
+            e2.printStackTrace();
+        }
+        
+        return null;
+    }
+    
+    public static String getLoadoutData(String loadoutId)
+    {
+        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/getLoadout/" + loadoutId;
+        try
+        {
+            URL url = new URL(uri);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept","application/xml");
+            
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            
+            Document document = builder.parse(conn.getInputStream());
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            StringWriter writer = new StringWriter();
+            transformer.transform(new DOMSource(document), new StreamResult(writer));
+            String output = writer.getBuffer().toString().replaceAll("\n|\r", ""); 
+            
+            return output;
+        }
+        catch(Exception e2)
+        {
+            e2.printStackTrace();
+        }
+        
+        return null;
+    }
+    
+    public static Document getThemeData(String themeId)
+    {
+        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/getTheme/" + themeId;
+        try
+        {
+            URL url = new URL(uri);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept","application/xml");
+            
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            
+            Document document = builder.parse(conn.getInputStream());
+            return document;
+        }
+        catch(Exception e2)
+        {
+            e2.printStackTrace();
+        }
+        
+        return null;
+    }
+    
+    public static InputStream getThemeImage(String themeId, String imageId)
+    {
+        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/getThemeImage/" + themeId + "/" + imageId;
+        try
+        {
+            URL url = new URL(uri);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept","application/xml");
+            
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            
+            return conn.getInputStream();
+        }
+        catch(Exception e2)
+        {
+            e2.printStackTrace();
+        }
+        
+        return null;
+    }
+    
+    //Calls the web service and loads in the code file from the web
+    public void loadCodeFromWeb()
+    {
+        String webdata = getCode();
+        String[] splitWebData = webdata.split("%", 2);
+
+        if(splitWebData.length == 2)
+        {
+            String mid = splitWebData[0];
+            code = splitWebData[1];
+            
+            List<String> validMazes = Arrays.asList(getMazesFromWeb());
+            if(validMazes.contains(mid))
+            {
+                 mazeId = mid;
+            }
+        }
+        else
+        {
+            code = splitWebData[0];
+        }
+    }
 }

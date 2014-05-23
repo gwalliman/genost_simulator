@@ -37,9 +37,9 @@ public class Stage extends JPanel implements MouseListener, Runnable, Scrollable
 	private int width, height, fps;
 	//Whether or not we can edit the maze in this view-- defaults to non-edit mode
 	private boolean editable = false;
-    //Out-of-bounds color and background color
-    private Color oobColor = new Color(71, 79, 97);
-    private Color bColor = new Color(238, 239, 242);
+        //Out-of-bounds color and background color
+        private Color oobColor = new Color(71, 79, 97);
+        private Color bColor = new Color(238, 239, 242);
 
 	public Stage(int w, int h, int f, Simulator s)
 	{
@@ -96,8 +96,7 @@ public class Stage extends JPanel implements MouseListener, Runnable, Scrollable
 			paintBlock(g, b, b.getColor());
 		}
 		
-		paintRobot(g, sim.getRobot().getBlock(), Color.RED);
-		
+		paintRobot(g, sim.getRobot().getBlock(), Color.RED);	
 	}
 
     //Draws a block on the stage
@@ -270,26 +269,6 @@ public class Stage extends JPanel implements MouseListener, Runnable, Scrollable
 	public void mouseExited(MouseEvent arg0) { }
 	
 	public void mouseReleased(MouseEvent arg0) { }
-
-	//Creates a standard scrollable stage
-    //Use this any time you need to add a stage somewhere
-	public static JPanel createStagePanel(int mazeWidth, int mazeHeight, int fps, Simulator sim, boolean editable)
-	{
-		JPanel stagePanel = new JPanel();
-		stagePanel.setSize(520, 400);
-		Stage simStage = new Stage(mazeWidth * 2, mazeHeight * 2, fps, sim);
-		if (editable)
-			simStage.allowEditing();
-
-		JScrollPane stageScroll = new JScrollPane(simStage);
-		stageScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		stageScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		stageScroll.setSize(mazeWidth, mazeHeight);
-		
-		stagePanel.add(stageScroll);
-		return stagePanel;
-	}
-		
 	
 	//Needed to allow for variable size maps and scrolling
 	@Override

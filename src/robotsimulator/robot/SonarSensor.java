@@ -59,7 +59,7 @@ public class SonarSensor implements Runnable
 	 * @param l	the length of the sonar from the robot
 	 * @param a	the angle of the sonar sensor with respect to the robot
 	 */
-	public SonarSensor(Simulator s, String n, double x, double y, int l, int a)
+	public SonarSensor(Simulator s, String n, double x, double y, int l, int a, boolean absolute)
 	{
 		sim = s;
 		x0 = x;
@@ -67,9 +67,12 @@ public class SonarSensor implements Runnable
 		length = l;
 		label = n;
 		type = 'l';
-		angle = a;
+                if(absolute)
+                    angle = a + (int)sim.getRobot().getAngle();
+                else
+                    angle = a;
 		
-		int actualA = (int)Math.round(a);
+		int actualA = (int)Math.round(angle);
 		if(actualA > 360)
 		{
 			actualA -= 360;
@@ -81,7 +84,8 @@ public class SonarSensor implements Runnable
 		Line2D line = new Line2D.Double(x0, y0, x1, y1);
 		shape1 = line;
 		
-		rotate(s.getRobot().getAngle());
+                if(!absolute)
+                    rotate(s.getRobot().getAngle());
 		
 		robotThread = new Thread(this);
 		robotThread.start();
@@ -97,7 +101,7 @@ public class SonarSensor implements Runnable
 	 * @param l	the length of the sonar from the robot
 	 * @param a	the angle of the sonar sensor with respect to the robot
 	 */
-	public SonarSensor(Simulator s, String n, double x, double y, int l, int a, int f)
+	public SonarSensor(Simulator s, String n, double x, double y, int l, int a, int f, boolean absolute)
 	{
 		sim = s;
 		x0 = x;
@@ -105,10 +109,13 @@ public class SonarSensor implements Runnable
 		length = l;
 		label = n;
 		type = 'c';
-		angle = a;
+                if(absolute)
+                    angle = a + (int)sim.getRobot().getAngle();
+                else
+                    angle = a;
 		fov = f;
 			
-		int actualA = (int)Math.round(a);
+		int actualA = (int)Math.round(angle);
 		if(actualA > 360)
 		{
 			actualA -= 360;
@@ -124,7 +131,8 @@ public class SonarSensor implements Runnable
 		line = new Line2D.Double(x0, y0, x2, y2);
 		shape2 = line;
 		
-		rotate(s.getRobot().getAngle());
+                if(!absolute)
+                    rotate(s.getRobot().getAngle());
 
 		robotThread = new Thread(this);
 		robotThread.start();

@@ -2,11 +2,13 @@ package robotsimulator.world;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import java.io.ByteArrayOutputStream;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,8 +23,6 @@ import org.w3c.dom.NodeList;
 import robotsimulator.RobotSimulator;
 import robotsimulator.Simulator;
 import robotsimulator.gui.MainApplet;
-import static robotsimulator.gui.MainApplet.loadSprite;
-import robotsimulator.gui.SimulatorPanel;
 import robotsimulator.worldobject.Block;
 
 public class World 
@@ -157,7 +157,8 @@ public class World
                     //Read themes from the jar file
 		
                     //Document document = builder.parse(cl.getResourceAsStream("Resources/Themes/" + themeid + "/theme.xml"));
-                    Document document = SimulatorPanel.getThemeData(themeid);
+                    RobotSimulator.println("Getting theme data");
+                    Document document = sim.mainApp.getThemeData(themeid);
                     Node root = document.getDocumentElement();
 			
                     XPathFactory xPathFactory = XPathFactory.newInstance();
@@ -174,53 +175,70 @@ public class World
 		    //Reset cell types beforehand
 			cellTypes = new ArrayList<CellType>();
 		    
+                    RobotSimulator.println("Loading in celltypes");
 		    NodeList celltypes = ((NodeList)xpath.compile("celltypes/celltype").evaluate(root, XPathConstants.NODESET));
 		    for(int i = 0; i < celltypes.getLength(); i++)
 		    {
 		    	Node idNode = celltypes.item(i).getAttributes().getNamedItem("id");
-			    Node nameNode = (((NodeList)xpath.compile("name").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
-			    Node widthNode = (((NodeList)xpath.compile("width").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
-			    Node heightNode = (((NodeList)xpath.compile("height").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
-			    Node clipNode = (((NodeList)xpath.compile("clip").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
-			    Node colorNode = (((NodeList)xpath.compile("color").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
-			    Node imageNode = (((NodeList)xpath.compile("image").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
-                            Node coinNode = (((NodeList)xpath.compile("coin").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
-                            
-                            boolean isCoin;
-                            String coinUnder;
-                            
-                            if(coinNode == null)
-                            {
-                                isCoin = false;
-                                coinUnder = null;
-                            }
-                            else
-                            {
-                                isCoin = true;
-                                coinUnder = coinNode.getTextContent();
-                            }
-                            
-			    setCellType(
-			    		idNode.getNodeValue(), 
-						nameNode.getTextContent(), 
-						Integer.parseInt(widthNode.getTextContent()), 
-						Integer.parseInt(heightNode.getTextContent()), 
-						Boolean.parseBoolean(clipNode.getTextContent()),
-                                                isCoin,
-                                                coinUnder,
-						Color.decode(colorNode.getTextContent())
-					);
-                            String imageNodeTextContent = imageNode.getTextContent();
-                            String[] imageName = imageNodeTextContent.split("\\.");
-                            
-			    setCellTheme(
-			    		idNode.getNodeValue(), 
-			    		//cl.getResource("Resources/Themes/" + themeid + "/" + imageNode.getTextContent())
-                                        MainApplet.loadSprite(themeid, imageName[0])
-			    	);
+                        Node nameNode = (((NodeList)xpath.compile("name").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
+                        Node widthNode = (((NodeList)xpath.compile("width").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
+                        Node heightNode = (((NodeList)xpath.compile("height").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
+                        Node clipNode = (((NodeList)xpath.compile("clip").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
+                        Node colorNode = (((NodeList)xpath.compile("color").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
+                        Node imageNode = (((NodeList)xpath.compile("image").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
+                        Node coinNode = (((NodeList)xpath.compile("coin").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
+
+                        boolean isCoin;
+                        String coinUnder;
+
+                        if(coinNode == null)
+                        {
+                            isCoin = false;
+                            coinUnder = null;
+                        }
+                        else
+                        {
+                            isCoin = true;
+                            coinUnder = coinNode.getTextContent();
+                        }
+
+                        RobotSimulator.println("Setting celltype: " + nameNode.getTextContent());
+                        setCellType(
+                                    idNode.getNodeValue(), 
+                                            nameNode.getTextContent(), 
+                                            Integer.parseInt(widthNode.getTextContent()), 
+                                            Integer.parseInt(heightNode.getTextContent()), 
+                                            Boolean.parseBoolean(clipNode.getTextContent()),
+                                            isCoin,
+                                            coinUnder,
+                                            Color.decode(colorNode.getTextContent())
+                                    );
+                        String imageNodeTextContent = imageNode.getTextContent();
+                        String[] imageName = imageNodeTextContent.split("\\.");
+
+                        /*setCellTheme(
+                                    idNode.getNodeValue(), 
+                                    MainApplet.loadSprite(themeid, imageName[0])
+                        );*/
+                        setCellTheme(
+                                    idNode.getNodeValue(),
+                                    themeid,
+                                    imageName[0]
+                        );
 		    }
+                    
+                    RobotSimulator.println("Setting robot sprite");
+                    try 
+                    {
+                            BufferedImage robotImage = ImageIO.read(MainApplet.loadSprite(sim.themeid, "robot"));
+                            MainApplet.robotSprite = new ImageIcon(robotImage);
+                    }
+                    catch(IOException e)
+                    {
+                            RobotSimulator.println("Cannot find image.");
+                    }
 		    //Set the robot sprite too
-                    try
+                    /*try
                     {
                         InputStream is = loadSprite(themeid, "robot");
                         ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
@@ -235,24 +253,22 @@ public class World
                     catch(Exception e)
                     {
                         e.printStackTrace();
-                    }
+                    }*/
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
 		
+                RobotSimulator.println("Creating grid");
 		grid = new GridSquare[width / gridWidth][height / gridHeight];
-                int counter = 0;
 		for(int x = 0; x < width / gridWidth; x++)
 		{
 			for(int y = 0; y < height / gridHeight; y++)
 			{
 				grid[x][y] = new GridSquare(x * gridWidth, y * gridHeight, gridWidth, gridHeight, 0);
-                                counter++;
 			}
 		}
-                int asdf = 0;
 	}
 	
 	public ArrayList<Block> getBlocks()
@@ -289,6 +305,11 @@ public class World
 	public void setCellTheme(String id, InputStream is) 
 	{
 		cellThemes.put(id, new CellTheme(id, is));
+	}
+        
+        public void setCellTheme(String id, String tid, String ui) 
+	{
+		cellThemes.put(id, new CellTheme(id, tid, ui));
 	}
 	
 	public int getWidth()

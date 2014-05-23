@@ -51,5 +51,13 @@
 			<color>#FFFFFF</color>
 			<image>floor3.png</image>
 		</celltype>
+		<celltype id="coin">
+					<name>Coin 1</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>true</clip>
+					<color>#FFFFFF</color>
+					<image>thecoin.png</image>
+		</celltype>
 	</celltypes>
 </theme>

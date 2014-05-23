@@ -27,6 +27,126 @@
 			<color>#FF0000</color>
 			<image>wall3.png</image>
 		</celltype>
+		<celltype id="loz_wall4">
+			<name>Cliff 1</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#0000FF</color>
+			<image>cliff1.png</image>
+		</celltype>
+		<celltype id="loz_wall5">
+					<name>Cliff 2</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>true</clip>
+					<color>#0000FF</color>
+					<image>cliff2.png</image>
+		</celltype>
+		<celltype id="loz_wall6">
+					<name>Cliff 3</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>true</clip>
+					<color>#0000FF</color>
+					<image>cliff3.png</image>
+		</celltype>
+		<celltype id="loz_wall7">
+					<name>Cliff 4</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>true</clip>
+					<color>#0000FF</color>
+					<image>cliff4.png</image>
+		</celltype>
+		<celltype id="loz_wall8">
+					<name>Cliff 5</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>true</clip>
+					<color>#0000FF</color>
+					<image>cliff5.png</image>
+		</celltype>
+		<celltype id="loz_wall9">
+					<name>Cliff 6</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>true</clip>
+					<color>#0000FF</color>
+					<image>cliff6.png</image>
+		</celltype>
+		<celltype id="loz_wall10">
+			<name>Lake 1</name>
+			<width>1</width>
+			<height>1</height>
+			<clip>true</clip>
+			<color>#0000FF</color>
+			<image>wall4.png</image>
+		</celltype>
+		<celltype id="loz_wall11">
+					<name>Lake 2</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>true</clip>
+					<color>#0000FF</color>
+					<image>wall5.png</image>
+		</celltype>	
+		<celltype id="loz_wall12">
+					<name>Lake 3</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>true</clip>
+					<color>#0000FF</color>
+					<image>wall6.png</image>
+		</celltype>	
+		<celltype id="loz_wall13">
+					<name>Lake 4</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>true</clip>
+					<color>#0000FF</color>
+					<image>wall7.png</image>
+		</celltype>	
+		<celltype id="loz_wall14">
+					<name>Lake 5</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>true</clip>
+					<color>#0000FF</color>
+					<image>wall8.png</image>
+		</celltype>	
+		<celltype id="loz_wall15">
+					<name>Lake 6</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>true</clip>
+					<color>#0000FF</color>
+					<image>wall9.png</image>
+		</celltype>	
+		<celltype id="loz_wall16">
+					<name>Lake 7</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>true</clip>
+					<color>#0000FF</color>
+					<image>wall10.png</image>
+		</celltype>	
+		<celltype id="loz_wall17">
+					<name>Lake 8</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>true</clip>
+					<color>#0000FF</color>
+					<image>wall11.png</image>
+		</celltype>	
+		<celltype id="loz_wall18">
+					<name>Lake 9</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>true</clip>
+					<color>#0000FF</color>
+					<image>wall12.png</image>
+		</celltype>	
 		<celltype id="loz_floor1">
 			<name>Floor 1</name>
 			<width>1</width>
@@ -42,6 +162,62 @@
 			<clip>false</clip>
 			<color>#FFFFFF</color>
 			<image>floor2.png</image>
+		</celltype>
+		<celltype id="loz_floor3">
+					<name>Floor 3</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>false</clip>
+					<color>#FFFFFF</color>
+					<image>floor3.png</image>
+		</celltype>
+		<celltype id="loz_floor4">
+					<name>Floor 4</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>false</clip>
+					<color>#FFFFFF</color>
+					<image>floor4.png</image>
+		</celltype>
+		<celltype id="loz_floor5">
+					<name>Floor 5</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>false</clip>
+					<color>#FFFFFF</color>
+					<image>floor5.png</image>
+		</celltype>
+		<celltype id="loz_floor6">
+					<name>Floor 6</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>false</clip>
+					<color>#FFFFFF</color>
+					<image>floor6.png</image>
+		</celltype>
+		<celltype id="loz_floor7">
+					<name>Floor 7</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>false</clip>
+					<color>#FFFFFF</color>
+					<image>floor7.png</image>
+		</celltype>
+		<celltype id="loz_floor8">
+					<name>Floor 8</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>false</clip>
+					<color>#FFFFFF</color>
+					<image>floor8.png</image>
+		</celltype>
+		<celltype id="loz_floor9">
+					<name>Floor 9</name>
+					<width>1</width>
+					<height>1</height>
+					<clip>false</clip>
+					<color>#FFFFFF</color>
+					<image>floor9.png</image>
 		</celltype>
 		<celltype id="coin">
 			<name>Coin</name>

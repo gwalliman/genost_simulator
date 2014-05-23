@@ -237,41 +237,41 @@ public class Block
 	
 	private boolean checkEdgeCollision(ArrayList<Point> points, Point[][] worldPoints) 
 	{
-		for(Point p : points)
-		{
-			if(p.getX() < 0 || p.getX() >= sim.getWorld().getWidth() || p.getY() < 0 || p.getY() >= sim.getWorld().getHeight())
+            for(Point p : points)
             {
-            	return true;
+                if(p.getX() < 0 || p.getX() >= sim.getWorld().getWidth() || p.getY() < 0 || p.getY() >= sim.getWorld().getHeight())
+                {
+                    return true;
+                }
+
+                if(worldPoints[p.getX()][p.getY()].isOccupied() && worldPoints[p.getX()][p.getY()].getOccupier().getCellType().doesClip())
+                {
+                    return true;
+                }
+                else
+                {
+                    if(worldPoints[p.getX()][p.getY()].getOccupier().getCellType().isCoin())
+                    {
+                        worldPoints[p.getX()][p.getY()].getOccupier().setCellType(
+                                worldPoints[p.getX()][p.getY()].getOccupier().getCellType().getCoinUnder()
+                        );
+                        try
+                        {
+                            InputStream is = new ByteArrayInputStream(sim.coinBytes);
+                            Clip clip = AudioSystem.getClip();
+                            clip.open(AudioSystem.getAudioInputStream(is));
+                            clip.start();
+                        }
+                        catch(Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+
+                        return false;
+                    }
+                }
             }
-            
-			if(worldPoints[p.getX()][p.getY()].isOccupied() && worldPoints[p.getX()][p.getY()].getOccupier().getCellType().doesClip())
-			{
-                            if(worldPoints[p.getX()][p.getY()].getOccupier().getCellType().isCoin())
-                            {
-                                worldPoints[p.getX()][p.getY()].getOccupier().setCellType(
-                                        worldPoints[p.getX()][p.getY()].getOccupier().getCellType().getCoinUnder()
-                                );
-                                try
-                                {
-                                    InputStream is = new ByteArrayInputStream(sim.coinBytes);
-                                    Clip clip = AudioSystem.getClip();
-                                    clip.open(AudioSystem.getAudioInputStream(is));
-                                    clip.start();
-                                }
-                                catch(Exception e)
-                                {
-                                    e.printStackTrace();
-                                }
-                                
-                                return false;
-                            }
-                            else
-                            {
-				return true;
-                            }
-			}
-		}
-		return false;
+            return false;
 	}
 	
 	public Rectangle2D getRect()
