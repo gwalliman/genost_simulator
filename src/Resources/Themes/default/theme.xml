@@ -55,7 +55,7 @@
 					<name>Coin 1</name>
 					<width>1</width>
 					<height>1</height>
-					<clip>true</clip>
+					<clip>false</clip>
 					<color>#FFFFFF</color>
 					<image>thecoin.png</image>
 		</celltype>

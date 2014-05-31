@@ -123,34 +123,31 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 		
 		JPanel simPane = new JPanel(new GridBagLayout());		
 		//Controls size of left side-- input buttons, stage, etc. 3/4 of panel
-		GridBagConstraints leftSideConstraints = new GridBagConstraints();
-		leftSideConstraints.gridx = 0;
-		leftSideConstraints.gridy = 0;
-		leftSideConstraints.gridheight = 3;
-		leftSideConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
+		GridBagConstraints topSideConstraints = new GridBagConstraints();
+		topSideConstraints.fill = GridBagConstraints.HORIZONTAL;
 		//leftSideConstraints.insets = new Insets(4, 4, 4, 4);
 		
 		//Controls size of right side-- status, output, sensor data, etc. 1/4 of panel
-		GridBagConstraints rightSideConstraints = new GridBagConstraints();
-		rightSideConstraints.gridx = 0;
-                rightSideConstraints.gridy = GridBagConstraints.RELATIVE;
-		rightSideConstraints.gridheight = 1;
-		rightSideConstraints.anchor = GridBagConstraints.FIRST_LINE_END;
+		GridBagConstraints bottomSideConstraints = new GridBagConstraints();
+		bottomSideConstraints.gridx = 0;
+                bottomSideConstraints.gridy = GridBagConstraints.RELATIVE;
+		bottomSideConstraints.gridheight = 1;
+		bottomSideConstraints.anchor = GridBagConstraints.FIRST_LINE_END;
 		//rightSideConstraints.insets = new Insets(4, 4, 4, 4);
 		
-		topPanel = createLeftPanel();
-		simPane.add(topPanel, leftSideConstraints);
+		topPanel = createTopPanel();
+		simPane.add(topPanel, topSideConstraints);
 		
 		bottomPanel = createRightPanel();
-		simPane.add(bottomPanel, rightSideConstraints);
+		simPane.add(bottomPanel, bottomSideConstraints);
 
 		add(simPane);
 	}
 	
 	//Builds the left side of the window-- input buttons, stage, etc.
-	public JPanel createLeftPanel()
+	public JPanel createTopPanel()
 	{
-		JPanel leftPanel = new JPanel(new GridBagLayout());
+		JPanel topPanel = new JPanel(new GridBagLayout());
 		
 		
 		/*bottomConstraints = new GridBagConstraints();
@@ -165,17 +162,19 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 		//Create stage and add it with these constraints
 		//leftPanel.add(stagePanel, bottomConstraints);
 		
-		return leftPanel;
+		return topPanel;
 	}
         
         public void createStage(Simulator s)
         {
             stagePanel = new JPanel();
             sim = s;
-            stagePanel.add(createStagePanel(stageWidth, stageHeight, fps, sim));
+            GridBagConstraints stageConstraints = new GridBagConstraints();
+            stageConstraints.fill = GridBagConstraints.HORIZONTAL;
+            stagePanel.add(createStagePanel(stageWidth, stageHeight, fps, sim), stageConstraints);
                 
             //Create stage and add it with these constraints
-            topPanel.add(stagePanel, bottomConstraints);
+            topPanel.add(stagePanel);
         }
         
         public void startSensorThread()
@@ -540,7 +539,8 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 	{
 		stageWidth = width;
 		stageHeight = height;
-		stagePanel = createStagePanel(width, height, fps, sim);
+		stagePanel = new JPanel();
+                stagePanel.add(createStagePanel(width, height, fps, sim));
 		sim.getWorld().setGridWidth(width);
 		sim.getWorld().setGridHeight(height);
 	}
@@ -628,7 +628,7 @@ public class SimulatorPanel extends JPanel implements ActionListener {
     
     //Creates a standard scrollable stage
     //Use this any time you need to add a stage somewhere
-    public JPanel createStagePanel(int mazeWidth, int mazeHeight, int fps, Simulator sim)
+    public JScrollPane createStagePanel(int mazeWidth, int mazeHeight, int fps, Simulator sim)
     {
             JPanel sp = new JPanel();
             Stage simStage = new Stage(mazeWidth * 2, mazeHeight * 2, fps, sim);
@@ -636,10 +636,11 @@ public class SimulatorPanel extends JPanel implements ActionListener {
             JScrollPane stageScroll = new JScrollPane(simStage);
             stageScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
             stageScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-            stageScroll.setSize(mazeWidth * 2, mazeHeight * 2);
-
-            sp.add(stageScroll);
-            return sp;
+            //stageScroll.setSize(mazeWidth * 2, mazeHeight * 2);
+            return stageScroll;
+            
+            /*sp.add(stageScroll);
+            return sp;*/
     }
 }
 

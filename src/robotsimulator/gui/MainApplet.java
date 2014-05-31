@@ -3,7 +3,6 @@ package robotsimulator.gui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
@@ -59,7 +58,8 @@ public class MainApplet extends JApplet implements ChangeListener {
 	//Structural variables
 	private JTabbedPane tabPane;
 	private Simulator sim;
-	public SimulatorPanel simPanel;
+	//public SimulatorPanel simPanel;
+        public SimPanelNB simPanelNb;
 	
 	//IO variables
 	public String code;
@@ -121,12 +121,12 @@ public class MainApplet extends JApplet implements ChangeListener {
             sim = new Simulator(this);
             
             RobotSimulator.println("Setting up stage");
-            simPanel.createStage(sim);
-            simPanel.loadCodefromText(code, "Loaded from Web*");
+            simPanelNb.createStage(sim);
+            simPanelNb.loadCodefromText(code, "Loaded from Web*");
             
             //Start sensor thread
             RobotSimulator.println("Starting sensors");
-            simPanel.startSensorThread();
+            simPanelNb.startSensorThread();
             
             RobotSimulator.println("We are go for launch");
 
@@ -160,8 +160,8 @@ public class MainApplet extends JApplet implements ChangeListener {
 		tabPane.setActionMap(null);
 		//tabPane.addChangeListener(this);
 		
-		simPanel = new SimulatorPanel(width, height, fps, sim, this);
-                tabPane.addTab("Simulator", simPanel);
+		simPanelNb = new SimPanelNB(width, height, fps, sim, this);
+                tabPane.addTab("Simulator", simPanelNb);
 		
 		//mazePanel = new MazeBuilderPanel(fps, sim, this);
                 //Add in the maze builder tab if we're not using a student build
@@ -280,13 +280,13 @@ public class MainApplet extends JApplet implements ChangeListener {
 	{
 		if (inSimulatorView())
 		{
-			simPanel.resumeSensorThread();
+			simPanelNb.resumeSensorThread();
 		}
 		if (inMazeView())
 		{
 			//Stop execution
-			simPanel.stopExecution();
-			simPanel.stopSensorThread();
+			simPanelNb.stopExecution();
+			simPanelNb.stopSensorThread();
 			//sim.stop();
 		}
 	}

@@ -24,10 +24,10 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _SetCodeCode_QNAME = new QName("http://tempuri.org/", "code");
-    private final static QName _GetStatusResponseGetStatusResult_QNAME = new QName("http://tempuri.org/", "GetStatusResult");
-    private final static QName _SetStatusState_QNAME = new QName("http://tempuri.org/", "state");
     private final static QName _GetCodeResponseGetCodeResult_QNAME = new QName("http://tempuri.org/", "GetCodeResult");
+    private final static QName _SetCodeCode_QNAME = new QName("http://tempuri.org/", "code");
+    private final static QName _SetStatusState_QNAME = new QName("http://tempuri.org/", "state");
+    private final static QName _GetStatusResponseGetStatusResult_QNAME = new QName("http://tempuri.org/", "GetStatusResult");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.tempuri
@@ -104,18 +104,18 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "code", scope = SetCode.class)
-    public JAXBElement<String> createSetCodeCode(String value) {
-        return new JAXBElement<String>(_SetCodeCode_QNAME, String.class, SetCode.class, value);
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "GetCodeResult", scope = GetCodeResponse.class)
+    public JAXBElement<String> createGetCodeResponseGetCodeResult(String value) {
+        return new JAXBElement<String>(_GetCodeResponseGetCodeResult_QNAME, String.class, GetCodeResponse.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "GetStatusResult", scope = GetStatusResponse.class)
-    public JAXBElement<String> createGetStatusResponseGetStatusResult(String value) {
-        return new JAXBElement<String>(_GetStatusResponseGetStatusResult_QNAME, String.class, GetStatusResponse.class, value);
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "code", scope = SetCode.class)
+    public JAXBElement<String> createSetCodeCode(String value) {
+        return new JAXBElement<String>(_SetCodeCode_QNAME, String.class, SetCode.class, value);
     }
 
     /**
@@ -131,9 +131,9 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "GetCodeResult", scope = GetCodeResponse.class)
-    public JAXBElement<String> createGetCodeResponseGetCodeResult(String value) {
-        return new JAXBElement<String>(_GetCodeResponseGetCodeResult_QNAME, String.class, GetCodeResponse.class, value);
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "GetStatusResult", scope = GetStatusResponse.class)
+    public JAXBElement<String> createGetStatusResponseGetStatusResult(String value) {
+        return new JAXBElement<String>(_GetStatusResponseGetStatusResult_QNAME, String.class, GetStatusResponse.class, value);
     }
 
 }

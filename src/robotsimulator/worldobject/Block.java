@@ -208,6 +208,7 @@ public class Block
 			centerX = oldCenterX;
 			centerY = oldCenterY;
 			setCenter(centerX, centerY);
+                        sim.mainApp.simPanelNb.stopExecution();
 		}
 	}
 
@@ -220,6 +221,7 @@ public class Block
 		if(checkCollision())
 		{
 			setAngle(oldAngle);
+                        sim.mainApp.simPanelNb.stopExecution();
 			//angle = getDegAngle();
 		}
 	}

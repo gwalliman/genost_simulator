@@ -223,7 +223,7 @@
 			<name>Coin</name>
 			<width>1</width>
 			<height>1</height>
-			<clip>true</clip>
+			<clip>false</clip>
 			<color>#FFFFFF</color>
 			<image>coin.png</image>
 			<coin>loz_floor2</coin>
