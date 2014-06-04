@@ -6,10 +6,14 @@
 
 package robotsimulator.gui;
 
+import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ConcurrentModificationException;
-import javax.swing.JButton;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.JComboBox;
 import javax.swing.SwingWorker;
 import robotinterpreter.RobotInterpreter;
@@ -53,9 +57,56 @@ public class SimPanelNB extends javax.swing.JPanel {
         main = m;
                 
         initComponents();
-        mazeComboBox.setSelectedItem(main.mazeId);
-        jScrollPane1.setVisible(false);
+        int numItems = mazeComboBox.getItemCount();
+        Map<String, ArrayList<String>> mazeItemMap = new HashMap<String, ArrayList<String>>();
         
+        //Crappy hack to handle reordering the maze items due to the way I named them.
+        for (int i = 0;  i < numItems; i++) 
+        {
+            String mazeName = (String) mazeComboBox.getItemAt(i);
+            String[] mazeNameTokens = mazeName.split("_");
+            String mazeNum = mazeNameTokens[0];
+            char letter = mazeNum.charAt(mazeNum.length() - 1);
+            if(!Character.isDigit(letter))
+            {
+                mazeNum = mazeNum.substring(0, mazeNum.length() - 1);
+            }
+            
+            if(!mazeItemMap.containsKey(mazeNum))
+            {
+                mazeItemMap.put(mazeNum, new ArrayList<String>());
+            }
+            mazeItemMap.get(mazeNum).add(mazeName);
+        }
+        
+        ArrayList<String> mapKeys = new ArrayList<String>();
+        Set<String> keyMap = mazeItemMap.keySet();
+        Map<String, ArrayList<String>> newMazeItemMap = new HashMap<String, ArrayList<String>>();
+        
+        for(String key : keyMap)
+        {
+            ArrayList<String> items = mazeItemMap.get(key);
+            String lastItem = items.remove(items.size() - 1);
+            items.add(0, lastItem);
+            newMazeItemMap.put(key, items);
+        }
+        String[] sortedKeys = keyMap.toArray(new String[keyMap.size()]);
+        Arrays.sort(sortedKeys);
+        
+        mazeComboBox.removeAllItems();
+        for(String key : sortedKeys)
+        {
+            ArrayList<String> items = newMazeItemMap.get(key);
+            for(String item : items)
+            {
+                mazeComboBox.addItem(item);
+            }
+        }
+        //End crappy hack
+        
+        mazeComboBox.setSelectedItem(main.mazeId);
+        outputTextArea.setEditable(false);
+        outputTextArea.setBackground(Color.LIGHT_GRAY);
     }
     
     public void createStage(Simulator s)

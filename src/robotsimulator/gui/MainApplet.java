@@ -129,9 +129,6 @@ public class MainApplet extends JApplet implements ChangeListener {
             simPanelNb.startSensorThread();
             
             RobotSimulator.println("We are go for launch");
-
-            if (!studentBuild)
-                    setKeyBindings();
         }
 	
 	public static InputStream loadSprite(String themeId, String imageId)
