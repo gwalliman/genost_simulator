@@ -316,7 +316,7 @@ public class Simulator implements RobotListener
 	}
 	
 	//Resets the stage back to the default, featureless void of white space
-	public void resetStage()
+	public void resetStage(int guiWidth, int guiHeight)
 	{
 		world = new World(guiWidth, guiHeight, this);
 		world.setTheme(themeid);		

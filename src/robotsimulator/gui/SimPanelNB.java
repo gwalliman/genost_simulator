@@ -32,9 +32,6 @@ public class SimPanelNB extends javax.swing.JPanel {
     private MainApplet main;
     private Simulator sim;
     
-    //Simulator stage
-    private int stageWidth = 520;
-    private int stageHeight = 400;
     //Simulator variables
     private RobotInterpreter r;
     SwingWorker<Void, Void> executor;
@@ -46,6 +43,7 @@ public class SimPanelNB extends javax.swing.JPanel {
     private boolean readyToRun = false;
     DecimalFormat df = new DecimalFormat("#.0");    //Used by sensor output to make display not horrible
     private boolean highSpeed = false;
+    private boolean guiStarted = false;
 
     /**
      * Creates new form SimPanelNB
@@ -107,19 +105,13 @@ public class SimPanelNB extends javax.swing.JPanel {
         mazeComboBox.setSelectedItem(main.mazeId);
         outputTextArea.setEditable(false);
         outputTextArea.setBackground(Color.LIGHT_GRAY);
+        guiStarted = true;
     }
     
     public void createStage(Simulator s)
     {
         sim = s;
-        stageScrollPane.setViewportView(createStagePanel(stageWidth, stageHeight, fps, sim));
-    }
-    
-    public Stage createStagePanel(int mazeWidth, int mazeHeight, int fps, Simulator sim)
-    {
-        Stage simStage = new Stage(mazeWidth * 2, mazeHeight * 2, fps, sim);
-
-        return simStage;
+        stageScrollPane.setViewportView(main.createStagePanel(main.stageWidth, main.stageHeight, fps, sim));
     }
     
     //Updates the runningLbl with what it's waiting on (code, maze, etc.) and its current status
@@ -185,9 +177,9 @@ public class SimPanelNB extends javax.swing.JPanel {
 	
     public void updateStage(int width, int height)
     {
-        stageWidth = width;
-        stageHeight = height;
-        stageScrollPane.setViewportView(createStagePanel(width, height, fps, sim));
+        main.stageWidth = width;
+        main.stageHeight = height;
+        stageScrollPane.setViewportView(main.createStagePanel(width, height, fps, sim));
         sim.getWorld().setGridWidth(width);
         sim.getWorld().setGridHeight(height);
     }
@@ -348,7 +340,8 @@ public class SimPanelNB extends javax.swing.JPanel {
     private void mazeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mazeComboBoxActionPerformed
         //main.openNewMaze();
         JComboBox jcb = (JComboBox) evt.getSource();
-        main.mazeId = (String) jcb.getSelectedItem();
+        if(guiStarted)
+            main.mazeId = (String) jcb.getSelectedItem();
         if(sim != null)
         {
             main.mazeXml = sim.mainApp.getMazeData(main.mazeId);

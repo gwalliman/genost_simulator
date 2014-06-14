@@ -13,8 +13,8 @@ public class Cell
 	{
 		sim = s;
 		cellType = c;
-		int w = sim.getWorld().getGridWidth() * cellType.getWidth();
-		int h = sim.getWorld().getGridHeight() * cellType.getHeight();
+		int w = sim.getWorld().getCellWidth() * cellType.getWidth();
+		int h = sim.getWorld().getCellHeight() * cellType.getHeight();
 		b = new Block(w, h, x + (w / 2), y + (h / 2), a, s, cellType.getColor());
 		b.setCellType(cellType);
 	}
