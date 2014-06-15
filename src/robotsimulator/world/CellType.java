@@ -10,9 +10,10 @@ public class CellType
 	private Color color;
 	private boolean clip;
         private boolean coin;
+        private boolean finish;
         private String coinUnder;
 	
-	public CellType(String i, String n, int w, int h, boolean cl, boolean c2, String cu, Color c)
+	public CellType(String i, String n, int w, int h, boolean cl, boolean c2, String cu, boolean fin, Color c)
 	{
 		id = i;
 		label = n;
@@ -22,6 +23,7 @@ public class CellType
 		color = c;
                 coin = c2;
                 coinUnder = cu;
+                finish = fin;
 	}
 	
 	public String getID()
@@ -52,6 +54,11 @@ public class CellType
         public boolean isCoin()
         {
             return coin;
+        }
+        
+        public boolean isFinish()
+        {
+            return finish;
         }
 
 	public Color getColor() 

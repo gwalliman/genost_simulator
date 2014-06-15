@@ -35,8 +35,6 @@ public class Stage extends JPanel implements MouseListener, Runnable, Scrollable
     private Simulator sim;
     private Thread animator;
     private int width, height, fps;
-    //Whether or not we can edit the maze in this view-- defaults to non-edit mode
-    private boolean editable = false;
     //Out-of-bounds color and background color
     private Color oobColor = new Color(71, 79, 97);
     private Color bColor = new Color(238, 239, 242);
@@ -47,7 +45,6 @@ public class Stage extends JPanel implements MouseListener, Runnable, Scrollable
             width = w;
             height = h;
             fps = f;
-            editable = !sim.mainApp.studentBuild;
             this.addMouseListener(this);
 
             setDoubleBuffered(true);
@@ -60,18 +57,6 @@ public class Stage extends JPanel implements MouseListener, Runnable, Scrollable
     {
         width = w.getGridWidth();
         height = w.getGridHeight();
-    }
-	
-    //Call this to enable editing the maze (e.g. in maze builder)
-    public void allowEditing()
-    {
-            editable = true;
-    }
-	
-    //Call this method to disable editing the maze (e.g. in the simulator view)
-    public void disableEditing()
-    {
-            editable = false;
     }
 
     public void addNotify() 
@@ -233,7 +218,7 @@ public class Stage extends JPanel implements MouseListener, Runnable, Scrollable
     {
         //Give focus back to the main applet in order for keyboard controls to work
         MainApplet.m_instance.getFocus();
-        if (editable)
+        if (!sim.mainApp.studentBuild)
         {
             //Add the block to the point selected
             sim.getWorld().toggleCell(click.getX(), click.getY());

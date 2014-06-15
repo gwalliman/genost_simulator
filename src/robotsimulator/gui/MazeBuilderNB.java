@@ -6,6 +6,7 @@
 
 package robotsimulator.gui;
 
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,15 +58,14 @@ public class MazeBuilderNB extends javax.swing.JPanel
     
     public void preLaunchSetup()
     {
-        horzSpinner.setValue(sim.getWorld().getGridWidth());
-        vertSpinner.setValue(sim.getWorld().getGridHeight());
-        horzSpinner.addChangeListener(c);
-        vertSpinner.addChangeListener(c);
-        populatePalette();
+        updateMazeBuilderGUI();
     }
     
-    public void populatePalette()
+    public void updateMazeBuilderGUI()
     {
+        horzSpinner.removeChangeListener(c);
+        vertSpinner.removeChangeListener(c);
+        
         JPanel palettePanel = new JPanel();
         for(CellType ctype : sim.getWorld().getCellTypes())
         {
@@ -77,10 +77,36 @@ public class MazeBuilderNB extends javax.swing.JPanel
                 cellBtn.setSize(100, 100);
                 cellBtn.setName(cellTypeID);
                 cellBtn.addActionListener(a);
+                //Cell is Wall
+                if(ctype.doesClip())
+                {
+                    cellBtn.setBackground(Color.BLACK);
+                }
+                else if(ctype.isFinish())
+                {
+                    cellBtn.setBackground(Color.RED);
+                }
+                //Cell is Coin
+                else if(ctype.isCoin())
+                {
+                    cellBtn.setBackground(Color.YELLOW);
+                }
+                //Cell is Floor
+                else
+                {
+                    cellBtn.setBackground(Color.WHITE);
+                }
                 palettePanel.add(cellBtn);
             }
         }
         paletteScrollPane.setViewportView(palettePanel);
+        
+        horzSpinner.setValue(sim.getWorld().getGridWidth());
+        vertSpinner.setValue(sim.getWorld().getGridHeight());
+        finishModeComboBox.setSelectedIndex(main.finishMode);
+        
+        horzSpinner.addChangeListener(c);
+        vertSpinner.addChangeListener(c);
     }
     
     /**
@@ -101,6 +127,8 @@ public class MazeBuilderNB extends javax.swing.JPanel
         jLabel2 = new javax.swing.JLabel();
         vertSpinner = new javax.swing.JSpinner();
         newMazeBtn = new javax.swing.JButton();
+        finishModeComboBox = new JComboBox(main.finishModes);
+        jLabel3 = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(800, 600));
 
@@ -137,6 +165,14 @@ public class MazeBuilderNB extends javax.swing.JPanel
             }
         });
 
+        finishModeComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                finishModeComboBoxActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Finish Mode:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -147,11 +183,17 @@ public class MazeBuilderNB extends javax.swing.JPanel
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(paletteScrollPane)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(importBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(exportBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(newMazeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(importBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(exportBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(newMazeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(finishModeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -175,14 +217,22 @@ public class MazeBuilderNB extends javax.swing.JPanel
                             .addComponent(exportBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(importBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(newMazeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(8, 8, 8)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(vertSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(8, 8, 8)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel2)
+                                    .addComponent(vertSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 5, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(finishModeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel3)))))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(horzSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel1)))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -199,7 +249,7 @@ public class MazeBuilderNB extends javax.swing.JPanel
             {
                 main.mazeXml = sim.mainApp.getMazeData(main.mazeId);
                 sim.importStage(main.mazeXml);
-                populatePalette();
+                updateMazeBuilderGUI();
             }
         }
     }//GEN-LAST:event_importBtnActionPerformed
@@ -232,17 +282,24 @@ public class MazeBuilderNB extends javax.swing.JPanel
             sim.resetStage((int) hs.getValue() * sim.getWorld().getCellWidth(), (int) vs.getValue() * sim.getWorld().getCellHeight());
             horzSpinner.setValue(hs.getValue());
             vertSpinner.setValue(vs.getValue());
-            populatePalette();
+            updateMazeBuilderGUI();
         }
     }//GEN-LAST:event_newMazeBtnActionPerformed
+
+    private void finishModeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishModeComboBoxActionPerformed
+        JComboBox combo = (JComboBox) evt.getSource();
+        main.finishMode = combo.getSelectedIndex();
+    }//GEN-LAST:event_finishModeComboBoxActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton exportBtn;
+    private javax.swing.JComboBox finishModeComboBox;
     private javax.swing.JSpinner horzSpinner;
     private javax.swing.JButton importBtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JButton newMazeBtn;
     private javax.swing.JScrollPane paletteScrollPane;
     private javax.swing.JScrollPane stageScrollPane;

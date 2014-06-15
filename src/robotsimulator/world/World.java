@@ -185,19 +185,21 @@ public class World
                         Node colorNode = (((NodeList)xpath.compile("color").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
                         Node imageNode = (((NodeList)xpath.compile("image").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
                         Node coinNode = (((NodeList)xpath.compile("coin").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
+                        Node finishNode = (((NodeList)xpath.compile("finish").evaluate(celltypes.item(i), XPathConstants.NODESET))).item(0);
 
-                        boolean isCoin;
-                        String coinUnder;
+                        boolean isCoin = false;
+                        boolean isFinish = false;
+                        String coinUnder = null;
 
-                        if(coinNode == null)
-                        {
-                            isCoin = false;
-                            coinUnder = null;
-                        }
-                        else
+                        if(coinNode != null)
                         {
                             isCoin = true;
                             coinUnder = coinNode.getTextContent();
+                        }
+                        
+                        if(finishNode != null && finishNode.getTextContent().equals("true"))
+                        {
+                            isFinish = true;
                         }
 
                         RobotSimulator.println("Setting celltype: " + nameNode.getTextContent());
@@ -209,6 +211,7 @@ public class World
                                             Boolean.parseBoolean(clipNode.getTextContent()),
                                             isCoin,
                                             coinUnder,
+                                            isFinish,
                                             Color.decode(colorNode.getTextContent())
                                     );
                         String imageNodeTextContent = imageNode.getTextContent();
@@ -284,9 +287,9 @@ public class World
 		return cellTypes;
 	}
 	
-	public void setCellType(String id, String n, int w, int h, boolean cl, boolean c2, String cu, Color c) 
+	public void setCellType(String id, String n, int w, int h, boolean cl, boolean c2, String cu, boolean fin, Color c) 
 	{
-		cellTypes.add(new CellType(id, n, w, h, cl, c2, cu, c));
+		cellTypes.add(new CellType(id, n, w, h, cl, c2, cu, fin, c));
 		curCellType = cellTypes.get(0);
 	}
 	
@@ -401,11 +404,15 @@ public class World
 				if(c.getID().equals(ct))
 				{
 					curCellType = c;
+                                        
 					break;
 				}
 			}
 		}
-		
+		if(curCellType.isCoin())
+                {
+                    sim.mainApp.numCoins++;
+                }
 		toggleCell(x, y);
 	}
 	

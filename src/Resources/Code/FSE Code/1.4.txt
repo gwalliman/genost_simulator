@@ -1,9 +1,0 @@
-{
-	loopfor -1
-	{
-		method drive  ( string "f" );
-		waituntil ( [ method getSonars  ( int 1 ) < int 20 ] );
-		method stop ();
-		method turnAngle  ( int 90 );
-	}
-}

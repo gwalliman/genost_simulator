@@ -182,9 +182,17 @@ public class Robot implements Runnable
 	{
 		if(robotThread == null)
 		{
-			status = d;
-			robotThread = new Thread(this);
-			robotThread.start();
+                    if(d == 'f')
+                    {
+                        RobotSimulator.println("Driving forward");
+                    }
+                    else if(d == 'b')
+                    {
+                        RobotSimulator.println("Driving backwards");
+                    }
+                    status = d;
+                    robotThread = new Thread(this);
+                    robotThread.start();
 		}
 	}
 	
@@ -200,7 +208,16 @@ public class Robot implements Runnable
 			{
 				status = 'f';
 			}
-			
+                        
+			if(status == 'f')
+                        {
+                            RobotSimulator.println("Driving forward " + Integer.toString(dist) + " pixels");
+                        }
+                        else if(status == 'b')
+                        {
+                            RobotSimulator.println("Driving backwards " + Integer.toString(dist) + " pixels");
+                        }
+                        
 			driveDist = true;
 			distGoal = Math.abs(dist);
 			distTotal = 0;
@@ -214,9 +231,17 @@ public class Robot implements Runnable
 	{
 		if(robotThread == null)
 		{
-			status = d;
-			robotThread = new Thread(this);
-			robotThread.start();
+                    if(d == 'l')
+                    {
+                        RobotSimulator.println("Turning left");
+                    }
+                    else if(d == 'r')
+                    {
+                        RobotSimulator.println("Turning right");
+                    }
+                    status = d;
+                    robotThread = new Thread(this);
+                    robotThread.start();
 		}
 	}
 	
@@ -233,6 +258,16 @@ public class Robot implements Runnable
 				status = 'r';
 			}
 			
+                        if(status == 'l')
+                        {
+                            RobotSimulator.println("Turning left " + Integer.toString(angle) + " degrees");
+                        }
+                        else if(status == 'r')
+                        {
+                            RobotSimulator.println("Turning right " + Integer.toString(angle) + " degrees");
+                        }
+                        
+                        
 			rotateDist = true;
 			angGoal = angle;
 			angTotal = 0;
@@ -251,8 +286,12 @@ public class Robot implements Runnable
 	//Once a thread finishes executing, it calls stop to end that step of commands
 	public void stop()
 	{
+            RobotSimulator.println("Stopping");
 		status = 's';
-		robotThread = null;
+                robotThread = null;
+
+                //Used to determine if we have finished maze
+                b.checkCollision();
 	}
 
     //Main method of the robot-- determines what to do based on status code

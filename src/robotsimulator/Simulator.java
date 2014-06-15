@@ -1,12 +1,7 @@
 package robotsimulator;
 
-import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.URL;
-import java.net.URLConnection;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,16 +13,15 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-
 import robotinterpreter.RobotListener;
 import robotsimulator.gui.MainApplet;
 import robotsimulator.robot.Robot;
+import robotsimulator.world.CellType;
 import robotsimulator.world.World;
 import robotsimulator.worldobject.Block;
 
@@ -47,15 +41,15 @@ public class Simulator implements RobotListener
 	public int guiHeight;
 	int guiFPS = 60;
 	public String themeid;
-        public byte[] coinBytes;
-	
+
 	public boolean running = false;
+        public boolean finished = false;
     
 	public Simulator(MainApplet m)
-	{	
-            RobotSimulator.println("Importing maze from web");
-            importStage(m.mazeXml);
+	{
             mainApp = m;
+            RobotSimulator.println("Importing maze from web");           
+            importStage(m.mazeXml);
 	}
 	
 	public Robot getRobot()
@@ -198,6 +192,8 @@ public class Simulator implements RobotListener
     //Loads in a maze from the given file
 	public void importStage(String x)
 	{
+            mainApp.numCoins = 0;
+            finished = false;
             try
             {
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -214,6 +210,7 @@ public class Simulator implements RobotListener
                 Node guiWidthNode = root.getAttributes().getNamedItem("guiwidth");
                 Node guiHeightNode = root.getAttributes().getNamedItem("guiheight");
                 Node themeIDNode = root.getAttributes().getNamedItem("theme");
+                Node finishModeNode = root.getAttributes().getNamedItem("finishMode");
                 themeid = themeIDNode.getNodeValue();
 
                 //Collect robot attributes
@@ -250,12 +247,16 @@ public class Simulator implements RobotListener
 
                 guiWidth = Integer.parseInt(guiWidthNode.getNodeValue());
                 guiHeight = Integer.parseInt(guiHeightNode.getNodeValue());
+                if(finishModeNode != null)
+                {
+                    mainApp.finishMode = Integer.parseInt(finishModeNode.getNodeValue());
+                }
                 world = new World(guiWidth, guiHeight, this);
                 world.setGridWidth(Integer.parseInt(worldGridWidthNode.getTextContent()));
                 world.setGridHeight(Integer.parseInt(worldGridHeighthNode.getTextContent())); 
                 
                 RobotSimulator.println("Creating world");
-                world.setTheme(themeIDNode.getNodeValue());
+                world.setTheme(themeid);
                 
 
                 //Add objects to the world
@@ -273,6 +274,7 @@ public class Simulator implements RobotListener
                         cellTypeNode.getTextContent()
                     );
                 }
+                RobotSimulator.println(Integer.toString(mainApp.numCoins));
             }
             catch(Exception e)
             {
@@ -283,36 +285,37 @@ public class Simulator implements RobotListener
     //Saves the current stage to the provided file
 	public String exportStage() 
 	{
-		try 
-		{
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-	 
-			// root elements
-			Document doc = docBuilder.newDocument();
-			Element rootElement = doc.createElement("stage");
-			doc.appendChild(rootElement);
-			rootElement.setAttribute("guiwidth", Integer.toString(guiWidth));
-			rootElement.setAttribute("guiheight", Integer.toString(guiHeight));
-			rootElement.setAttribute("theme", themeid);
-			
-			robot.export(doc);
-			world.export(doc);
-			
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-                        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-                        StringWriter writer = new StringWriter();
-                        transformer.transform(new DOMSource(doc), new StreamResult(writer));
-                        String output = writer.getBuffer().toString().replaceAll("\n|\r", ""); 
-                        
-                        return output;
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-                        return null;
-		}		
+            try 
+            {
+                DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+                // root elements
+                Document doc = docBuilder.newDocument();
+                Element rootElement = doc.createElement("stage");
+                doc.appendChild(rootElement);
+                rootElement.setAttribute("guiwidth", Integer.toString(guiWidth));
+                rootElement.setAttribute("guiheight", Integer.toString(guiHeight));
+                rootElement.setAttribute("theme", themeid);
+                rootElement.setAttribute("finishMode", Integer.toString(mainApp.finishMode));
+
+                robot.export(doc);
+                world.export(doc);
+
+                TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                Transformer transformer = transformerFactory.newTransformer();
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+                StringWriter writer = new StringWriter();
+                transformer.transform(new DOMSource(doc), new StreamResult(writer));
+                String output = writer.getBuffer().toString().replaceAll("\n|\r", ""); 
+
+                return output;
+            } 
+            catch (Exception e) 
+            {
+                e.printStackTrace();
+                return null;
+            }		
 	}
 	
 	//Resets the stage back to the default, featureless void of white space
@@ -382,4 +385,35 @@ public class Simulator implements RobotListener
 			e.printStackTrace();
 		}
 	}
+    
+    public void checkFinished(CellType c)
+    {
+        switch(mainApp.finishModes[mainApp.finishMode])
+        {
+            case "DRIVE_TO_FINISH":
+                if(c.isFinish() && !finished)
+                {
+                    finishMaze();
+                }
+                break;
+            case "DRIVE_TO_FINISH_AND_STOP":
+                if(c.isFinish() && robot.getStatus() == 's' && !finished)
+                {
+                    finishMaze();
+                }
+                break;
+            case "COLLECT_ALL_COINS":
+                if(mainApp.numCoins <= 0 && !finished)
+                {
+                    finishMaze();
+                }
+                break;
+        }
+    }
+    
+    public void finishMaze()
+    {
+        RobotSimulator.println("You finished the maze");
+        finished = true;
+    }
 }

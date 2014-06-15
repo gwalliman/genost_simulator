@@ -222,7 +222,6 @@ public class Block
 		{
 			setAngle(oldAngle);
                         sim.mainApp.simPanelNb.stopExecution();
-			//angle = getDegAngle();
 		}
 	}
 	
@@ -248,6 +247,7 @@ public class Block
 
                 if(worldPoints[p.getX()][p.getY()].isOccupied() && worldPoints[p.getX()][p.getY()].getOccupier().getCellType().doesClip())
                 {
+                    sim.checkFinished(worldPoints[p.getX()][p.getY()].getOccupier().getCellType());
                     return true;
                 }
                 else
@@ -257,19 +257,15 @@ public class Block
                         worldPoints[p.getX()][p.getY()].getOccupier().setCellType(
                                 worldPoints[p.getX()][p.getY()].getOccupier().getCellType().getCoinUnder()
                         );
-                        try
-                        {
-                            InputStream is = new ByteArrayInputStream(sim.coinBytes);
-                            Clip clip = AudioSystem.getClip();
-                            clip.open(AudioSystem.getAudioInputStream(is));
-                            clip.start();
-                        }
-                        catch(Exception e)
-                        {
-                            e.printStackTrace();
-                        }
-
+                        sim.mainApp.numCoins--;
+                        
+                        //Check if we are finished after each coin
+                        sim.checkFinished(worldPoints[p.getX()][p.getY()].getOccupier().getCellType());
                         return false;
+                    }
+                    else
+                    {
+                        sim.checkFinished(worldPoints[p.getX()][p.getY()].getOccupier().getCellType());
                     }
                 }
             }

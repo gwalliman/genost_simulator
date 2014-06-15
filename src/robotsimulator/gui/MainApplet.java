@@ -38,7 +38,6 @@ import org.w3c.dom.Node;
 import robotsimulator.RobotSimulator;
 import robotsimulator.Simulator;
 import static robotsimulator.gui.MainApplet.m_instance;
-import static robotsimulator.gui.MainApplet.studentBuild;
 import robotsimulator.robot.Robot;
 import robotsimulator.robot.SonarSensor;
 
@@ -49,6 +48,8 @@ import robotsimulator.robot.SonarSensor;
 public class MainApplet extends JApplet implements ChangeListener 
 {
     public static MainApplet m_instance;
+    
+    public final String[] finishModes = new String[] {"NONE", "DRIVE_TO_FINISH", "DRIVE_TO_FINISH_AND_STOP", "COLLECT_ALL_COINS" };
 
     //GUI variables
     private int width = 800;
@@ -69,11 +70,13 @@ public class MainApplet extends JApplet implements ChangeListener
     public String mazeId;
     public String mazeXml;
     public String robotXml;
+    public int finishMode = 0;
+    public int numCoins = 0;
 
     public String codeId;
 
     //If true, this is a student build, and we should disable the maze builder, arrow keys, etc.
-    public static final boolean studentBuild = true;
+    public boolean studentBuild = true;
 
     //Robot image
     public static ImageIcon robotSprite;
@@ -228,7 +231,6 @@ public class MainApplet extends JApplet implements ChangeListener
         {
             public void actionPerformed(ActionEvent e) 
             {
-                RobotSimulator.println("Driving forward");
                 if (inSimulatorView() && !isExecuting())
                 {
                     sim.getRobot().drive('f');
@@ -240,7 +242,6 @@ public class MainApplet extends JApplet implements ChangeListener
         {
             public void actionPerformed(ActionEvent e) 
             {
-                RobotSimulator.println("Driving backwards");
                 if (inSimulatorView() && !isExecuting())
                         sim.getRobot().drive('b');
             }
@@ -250,7 +251,6 @@ public class MainApplet extends JApplet implements ChangeListener
         {
             public void actionPerformed(ActionEvent e) 
             {
-                RobotSimulator.println("Turning left");
                 if (inSimulatorView() && !isExecuting())
                     sim.getRobot().turn('l');
             }
@@ -260,7 +260,6 @@ public class MainApplet extends JApplet implements ChangeListener
         {
             public void actionPerformed(ActionEvent e) 
             {
-                RobotSimulator.println("Turning right");
                 if (inSimulatorView() && !isExecuting())
                         sim.getRobot().turn('r');
             }
@@ -270,7 +269,6 @@ public class MainApplet extends JApplet implements ChangeListener
         {
             public void actionPerformed(ActionEvent e) 
             {
-                RobotSimulator.println("Stopping");
                 if (inSimulatorView() && !isExecuting())
                         sim.getRobot().stop();
             }
