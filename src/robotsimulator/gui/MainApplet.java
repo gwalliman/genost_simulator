@@ -13,12 +13,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.StringTokenizer;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JComponent;
-import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -31,10 +31,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
-import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import robotsimulator.RobotSimulator;
 import robotsimulator.Simulator;
 import static robotsimulator.gui.MainApplet.m_instance;
@@ -50,6 +47,7 @@ public class MainApplet extends JApplet implements ChangeListener
     public static MainApplet m_instance;
     
     public final String[] finishModes = new String[] {"NONE", "DRIVE_TO_FINISH", "DRIVE_TO_FINISH_AND_STOP", "COLLECT_ALL_COINS" };
+    public static final String serviceBaseUri = "http://genost.org/api/";
 
     //GUI variables
     private int width = 800;
@@ -320,7 +318,7 @@ public class MainApplet extends JApplet implements ChangeListener
             org.tempuri.IService port = service.getBasicHttpBindingIService();  //* Autogen'd
             return port.getCode();                                              //* Autogen'd*/
             
-            String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/codeRestSvc/Service.svc/GetCode/";
+            String uri = "http://genost.org/api/getCode/";
             if(codeId != null && codeId != "")
             {
                 uri = uri + codeId;
@@ -335,19 +333,9 @@ public class MainApplet extends JApplet implements ChangeListener
                 URL url = new URL(uri);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
-                conn.setRequestProperty("Accept","application/xml");
-
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder builder = factory.newDocumentBuilder();
-
-                Document document = builder.parse(conn.getInputStream());
-                Element root = document.getDocumentElement();
-                
-                Node child = root.getFirstChild();
-                if (child instanceof CharacterData) {
-                    CharacterData cd = (CharacterData) child;
-                    return cd.getData();
-                }
+                 conn.setRequestProperty("Accept", "text/plain");
+                String inputStreamString = new Scanner(conn.getInputStream(),"UTF-8").useDelimiter("\\A").next();
+                return inputStreamString;
             }
             catch(Exception e2)
             {
@@ -365,7 +353,7 @@ public class MainApplet extends JApplet implements ChangeListener
 
     public String[] getMazesFromWeb()
     {
-        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/listMazes";
+        String uri = serviceBaseUri + "listMazes";
         try
         {
             URL url = new URL(uri);
@@ -421,7 +409,7 @@ public class MainApplet extends JApplet implements ChangeListener
     
     public String getMazeData(String mazeId)
     {
-        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/getMaze/" + mazeId;
+        String uri = serviceBaseUri + "getMaze/" + mazeId;
         try
         {
             URL url = new URL(uri);
@@ -452,7 +440,7 @@ public class MainApplet extends JApplet implements ChangeListener
     
     public static String getLoadoutData(String loadoutId)
     {
-        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/getLoadout/" + loadoutId;
+        String uri = serviceBaseUri + "getLoadout/" + loadoutId;
         try
         {
             URL url = new URL(uri);
@@ -483,7 +471,7 @@ public class MainApplet extends JApplet implements ChangeListener
     
     public static Document getThemeData(String themeId)
     {
-        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/getTheme/" + themeId;
+        String uri = serviceBaseUri + "getTheme/" + themeId;
         try
         {
             URL url = new URL(uri);
@@ -507,7 +495,7 @@ public class MainApplet extends JApplet implements ChangeListener
     
     public static InputStream getThemeImage(String themeId, String imageId)
     {
-        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/getThemeImage/" + themeId + "/" + imageId;
+        String uri = serviceBaseUri + "getThemeImage/" + themeId + "/" + imageId;
         try
         {
             URL url = new URL(uri);
@@ -553,7 +541,7 @@ public class MainApplet extends JApplet implements ChangeListener
     
     public String[] getThemesFromWeb()
     {
-        String uri = "http://venus.eas.asu.edu/WSRepository/eRobotic2/mazeSvc/Service.svc/listThemes";
+        String uri = serviceBaseUri + "listThemes";
         try
         {
             URL url = new URL(uri);
