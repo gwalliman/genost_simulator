@@ -72,6 +72,8 @@ public class MainApplet extends JApplet implements ChangeListener
     public int numCoins = 0;
 
     public String codeId;
+    public String username;
+    public String password;
 
     //If true, this is a student build, and we should disable the maze builder, arrow keys, etc.
     public boolean studentBuild = true;
@@ -145,7 +147,8 @@ public class MainApplet extends JApplet implements ChangeListener
             mazeBuilderNb.preLaunchSetup();
         }
         
-        setKeyBindings();
+        if(!studentBuild)
+            setKeyBindings();
         RobotSimulator.println("We are go for launch");
     }
 
@@ -318,7 +321,7 @@ public class MainApplet extends JApplet implements ChangeListener
             org.tempuri.IService port = service.getBasicHttpBindingIService();  //* Autogen'd
             return port.getCode();                                              //* Autogen'd*/
             
-            String uri = "http://genost.org/api/getCode/";
+            String uri = serviceBaseUri + "getCode/";
             if(codeId != null && codeId != "")
             {
                 uri = uri + codeId;
@@ -520,22 +523,16 @@ public class MainApplet extends JApplet implements ChangeListener
     public void loadCodeFromWeb()
     {
         String webdata = getCode();
-        String[] splitWebData = webdata.split("%", 2);
+        String[] splitWebData = webdata.split("%", 4);
+        username = splitWebData[0].trim();
+        password = splitWebData[1].trim();
+        String mid = splitWebData[2].trim();
+        code = splitWebData[3];
 
-        if(splitWebData.length == 2)
+        List<String> validMazes = Arrays.asList(getMazesFromWeb());
+        if(validMazes.contains(mid))
         {
-            String mid = splitWebData[0];
-            code = splitWebData[1];
-            
-            List<String> validMazes = Arrays.asList(getMazesFromWeb());
-            if(validMazes.contains(mid))
-            {
-                 mazeId = mid;
-            }
-        }
-        else
-        {
-            code = splitWebData[0];
+             mazeId = mid;
         }
     }
     

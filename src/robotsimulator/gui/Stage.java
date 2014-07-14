@@ -87,7 +87,8 @@ public class Stage extends JPanel implements MouseListener, Runnable, Scrollable
             paintBlock(g, b, b.getColor());
         }
 
-        paintRobot(g, sim.getRobot().getBlock(), Color.RED);	
+        paintRobot(g, sim.getRobot().getBlock(), Color.RED);
+        //paintSonarSensors(g);
     }
 
     //Draws a block on the stage

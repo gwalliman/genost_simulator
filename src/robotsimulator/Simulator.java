@@ -1,7 +1,16 @@
 package robotsimulator;
 
+import java.awt.GridLayout;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -415,5 +424,49 @@ public class Simulator implements RobotListener
     {
         RobotSimulator.println("You finished the maze");
         finished = true;
+        mainApp.simPanelNb.stopExecution();
+        robot.stop();
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("You finished the maze!"));
+        JOptionPane.showMessageDialog(null, "You finished the maze!", "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
+        if(mainApp.username != "" && mainApp.password != "")
+        {
+            postSuccess();
+        }
+        System.exit(0);
+    }
+    
+    public void postSuccess()
+    {
+        try
+        {
+            URL url = new URL("http://genost.org/api/postSuccess/" + mainApp.username + "/" + mainApp.password + "/" + mainApp.codeId);
+            URLConnection urlConn;
+            DataOutputStream printout;
+            DataInputStream input;
+            urlConn = url.openConnection();
+            urlConn.setDoInput (true);
+            urlConn.setDoOutput (true);
+            urlConn.setUseCaches (false);
+            urlConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            
+            printout = new DataOutputStream (urlConn.getOutputStream());
+            String content = mainApp.code + mainApp.codeId;
+            printout.writeBytes (content);
+            printout.flush();
+            printout.close();
+            
+            input = new DataInputStream (urlConn.getInputStream ());
+            String str;
+            while (null != ((str = input.readLine())))
+            {
+                System.out.println (str);
+            }
+            input.close();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }
