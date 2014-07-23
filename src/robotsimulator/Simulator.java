@@ -184,18 +184,18 @@ public class Simulator implements RobotListener
 	@Override
 	public void print(String s) 
 	{
-		System.out.print(s);		
+            RobotSimulator.print(s);
 	}
 
 	@Override
 	public void println(String s) {
-		System.out.println(s);		
+		RobotSimulator.println(s);		
 	
 	}
 
 	@Override
 	public void error(String var, String e) {
-		System.out.println(e);		
+		RobotSimulator.println(e);		
 	}
         
     //Loads in a maze from the given file
@@ -283,11 +283,11 @@ public class Simulator implements RobotListener
                         cellTypeNode.getTextContent()
                     );
                 }
-                RobotSimulator.println(Integer.toString(mainApp.numCoins));
             }
             catch(Exception e)
             {
                     e.printStackTrace();
+                RobotSimulator.println(e.getMessage());
             }
 	}
 	
@@ -323,6 +323,7 @@ public class Simulator implements RobotListener
             catch (Exception e) 
             {
                 e.printStackTrace();
+                RobotSimulator.println(e.getMessage());     
                 return null;
             }		
 	}
@@ -392,6 +393,7 @@ public class Simulator implements RobotListener
 		catch (Exception e)
 		{
 			e.printStackTrace();
+                        RobotSimulator.println(e.getMessage());
 		}
 	}
     
@@ -467,6 +469,7 @@ public class Simulator implements RobotListener
         catch(Exception e)
         {
             e.printStackTrace();
+            RobotSimulator.println(e.getMessage());
         }
     }
 }

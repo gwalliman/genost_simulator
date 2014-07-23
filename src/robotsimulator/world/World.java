@@ -259,6 +259,7 @@ public class World
 		catch(Exception e)
 		{
 			e.printStackTrace();
+                        RobotSimulator.println(e.getMessage());
 		}
 		
                 RobotSimulator.println("Creating grid");
@@ -295,7 +296,6 @@ public class World
 	
 	public void setCurrentCellType(CellType c) 
 	{
-            RobotSimulator.println(c.getID());
             curCellType = c;
 	}
 	
@@ -474,6 +474,7 @@ public class World
 		catch(Exception e)
 		{
                     e.printStackTrace();
+                    RobotSimulator.println(e.getMessage());
 		}
 	}
 	

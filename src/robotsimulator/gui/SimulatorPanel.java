@@ -532,6 +532,7 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 		catch (Exception e) 
 		{
 			e.printStackTrace();
+                        RobotSimulator.println(e.getMessage());
 		}
     }
 	
@@ -582,6 +583,7 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 		catch (ConcurrentModificationException e)
 		{
                     e.printStackTrace();
+                    RobotSimulator.println(e.getMessage());
 		}
 	}
 	
@@ -616,6 +618,7 @@ public class SimulatorPanel extends JPanel implements ActionListener {
 				catch (InterruptedException e) 
 				{
 					e.printStackTrace();
+                                        RobotSimulator.println(e.getMessage());
 				}
 			}
 		}

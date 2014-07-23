@@ -9,11 +9,25 @@ import robotsimulator.gui.MainApplet;
  */
 public class RobotSimulator
 {
+    public static MainApplet m;
     //Use these methods to centralize output
     //Could later easily output to a textarea or file, log data, etc.
-	public static void println(String m) 
+	public static void println(String message) 
 	{
-		System.out.println(m);
+            if(m != null && m.simPanelNb != null)
+            {
+                m.simPanelNb.printToConsole(message + "\n");
+            }
+            System.out.println(message);
+	}
+        
+        public static void print(String message) 
+	{
+            if(m != null && m.simPanelNb != null)
+            {
+                m.simPanelNb.printToConsole(message);
+            }
+            System.out.print(message);
 	}
 
 	public static void halt() 
@@ -23,7 +37,7 @@ public class RobotSimulator
 	
 	public static void main(String[] args) 
 	{
-		MainApplet m = new MainApplet();
+		m = new MainApplet();
 		m.init();
 		m.start();
 		

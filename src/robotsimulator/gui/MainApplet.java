@@ -85,6 +85,7 @@ public class MainApplet extends JApplet implements ChangeListener
     {
         try
         {
+           RobotSimulator.m = this;
            String url = getDocumentBase().toString();
            Map<String, String> paramValue = new HashMap<String, String>();
 
@@ -104,11 +105,14 @@ public class MainApplet extends JApplet implements ChangeListener
         catch(Exception e)
         {
             e.printStackTrace();
+            RobotSimulator.println(e.getMessage());
         }
         finally
         {
             if(codeId == null || codeId.equals(""))
+            {
                 codeId =  "default";
+            }
         }
 
         RobotSimulator.println("Loading in code from web");
@@ -163,6 +167,7 @@ public class MainApplet extends JApplet implements ChangeListener
             catch (Exception e)
             {
                     e.printStackTrace();
+                    RobotSimulator.println(e.getMessage());
                     return null;
             }
     }
@@ -343,6 +348,7 @@ public class MainApplet extends JApplet implements ChangeListener
             catch(Exception e2)
             {
                 e2.printStackTrace();
+                RobotSimulator.println(e2.getMessage());
             }
 
             return null;
@@ -379,6 +385,7 @@ public class MainApplet extends JApplet implements ChangeListener
         catch(Exception e2)
         {
             e2.printStackTrace();
+            RobotSimulator.println(e2.getMessage());
         }
         
         return null;
@@ -436,6 +443,7 @@ public class MainApplet extends JApplet implements ChangeListener
         catch(Exception e2)
         {
             e2.printStackTrace();
+            RobotSimulator.println(e2.getMessage());
         }
         
         return null;
@@ -467,6 +475,7 @@ public class MainApplet extends JApplet implements ChangeListener
         catch(Exception e2)
         {
             e2.printStackTrace();
+            RobotSimulator.println(e2.getMessage());
         }
         
         return null;
@@ -491,6 +500,7 @@ public class MainApplet extends JApplet implements ChangeListener
         catch(Exception e2)
         {
             e2.printStackTrace();
+            RobotSimulator.println(e2.getMessage());
         }
         
         return null;
@@ -514,6 +524,7 @@ public class MainApplet extends JApplet implements ChangeListener
         catch(Exception e2)
         {
             e2.printStackTrace();
+            RobotSimulator.println(e2.getMessage());
         }
         
         return null;
@@ -561,6 +572,7 @@ public class MainApplet extends JApplet implements ChangeListener
         catch(Exception e2)
         {
             e2.printStackTrace();
+            RobotSimulator.println(e2.getMessage());
         }
         
         return null;

@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.swing.JComboBox;
 import javax.swing.SwingWorker;
+import javax.swing.text.DefaultCaret;
 import robotinterpreter.RobotInterpreter;
 import robotsimulator.RobotSimulator;
 import robotsimulator.Simulator;
@@ -55,6 +56,10 @@ public class SimPanelNB extends javax.swing.JPanel {
         main = m;
                 
         initComponents();
+        
+        DefaultCaret caret = (DefaultCaret)consoleTextArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        
         int numItems = mazeComboBox.getItemCount();
         Map<String, ArrayList<String>> mazeItemMap = new HashMap<String, ArrayList<String>>();
         
@@ -105,6 +110,8 @@ public class SimPanelNB extends javax.swing.JPanel {
         mazeComboBox.setSelectedItem(main.mazeId);
         outputTextArea.setEditable(false);
         outputTextArea.setBackground(Color.LIGHT_GRAY);
+        consoleTextArea.setEditable(false);
+        consoleTextArea.setBackground(Color.LIGHT_GRAY);
         guiStarted = true;
     }
     
@@ -172,6 +179,7 @@ public class SimPanelNB extends javax.swing.JPanel {
         catch (Exception e) 
         {
                 e.printStackTrace();
+                RobotSimulator.println(e.getMessage());
         }
     }
 	
@@ -209,11 +217,12 @@ public class SimPanelNB extends javax.swing.JPanel {
                 newSensorData += t;
             }
 
-            sensorTextArea.setText(newSensorData);
+            sonarTextArea.setText(newSensorData);
         }
         catch (ConcurrentModificationException e)
         {
             e.printStackTrace();
+            RobotSimulator.println(e.getMessage());
         }
     }
 	
@@ -245,7 +254,9 @@ public class SimPanelNB extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         outputTextArea = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
-        sensorTextArea = new javax.swing.JTextArea();
+        consoleTextArea = new javax.swing.JTextArea();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        sonarTextArea = new javax.swing.JTextArea();
 
         setPreferredSize(new java.awt.Dimension(800, 600));
 
@@ -290,9 +301,13 @@ public class SimPanelNB extends javax.swing.JPanel {
         outputTextArea.setRows(5);
         jScrollPane1.setViewportView(outputTextArea);
 
-        sensorTextArea.setColumns(20);
-        sensorTextArea.setRows(5);
-        jScrollPane2.setViewportView(sensorTextArea);
+        consoleTextArea.setColumns(20);
+        consoleTextArea.setRows(5);
+        jScrollPane2.setViewportView(consoleTextArea);
+
+        sonarTextArea.setColumns(20);
+        sonarTextArea.setRows(5);
+        jScrollPane3.setViewportView(sonarTextArea);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -313,8 +328,10 @@ public class SimPanelNB extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(resetBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
-                .addComponent(speedBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(speedBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -332,7 +349,8 @@ public class SimPanelNB extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 21, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -435,15 +453,21 @@ public class SimPanelNB extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_speedBtnActionPerformed
 
+    public void printToConsole(String message)
+    {
+        consoleTextArea.append(message);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea consoleTextArea;
     private javax.swing.JButton executeBtn;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JComboBox mazeComboBox;
     private javax.swing.JTextArea outputTextArea;
     private javax.swing.JButton resetBtn;
-    private javax.swing.JTextArea sensorTextArea;
+    private javax.swing.JTextArea sonarTextArea;
     private javax.swing.JButton speedBtn;
     private javax.swing.JScrollPane stageScrollPane;
     private javax.swing.JButton stopBtn;
@@ -482,6 +506,7 @@ public class SimPanelNB extends javax.swing.JPanel {
                 catch (InterruptedException e) 
                 {
                         e.printStackTrace();
+                        RobotSimulator.println(e.getMessage());
                 }
             }
         }
