@@ -414,7 +414,7 @@ public class Simulator implements RobotListener
                 }
                 break;
             case "COLLECT_ALL_COINS":
-                if(mainApp.numCoins <= 0 && !finished)
+                if(mainApp.numCoins <= 0 && robot.getStatus() == 's' && !finished)
                 {
                     finishMaze();
                 }
@@ -428,13 +428,15 @@ public class Simulator implements RobotListener
         finished = true;
         mainApp.simPanelNb.stopExecution();
         robot.stop();
-        JPanel panel = new JPanel(new GridLayout(0, 1));
-        panel.add(new JLabel("You finished the maze!"));
-        JOptionPane.showMessageDialog(null, "You finished the maze!", "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
         if(mainApp.username != "" && mainApp.password != "")
         {
             postSuccess();
+            RobotSimulator.println("Success message posted to Genost gradebook");
         }
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("You finished the maze!"));
+        JOptionPane.showMessageDialog(null, "You finished the maze!", "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
+        
         System.exit(0);
     }
     

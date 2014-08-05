@@ -32,18 +32,13 @@
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="executeBtn" min="-2" pref="93" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="stopBtn" min="-2" pref="93" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="105" max="-2" attributes="0"/>
                       <Component id="resetBtn" min="-2" pref="93" max="-2" attributes="0"/>
                   </Group>
                   <Component id="jScrollPane2" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="speedBtn" alignment="1" min="-2" pref="93" max="-2" attributes="0"/>
-                  <Component id="jScrollPane3" alignment="1" min="-2" pref="222" max="-2" attributes="0"/>
-              </Group>
+              <Component id="jScrollPane3" min="-2" pref="222" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -56,9 +51,7 @@
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="resetBtn" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
-                      <Component id="stopBtn" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
                       <Component id="executeBtn" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
-                      <Component id="speedBtn" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
                   </Group>
                   <Component id="mazeComboBox" max="32767" attributes="0"/>
               </Group>
@@ -95,14 +88,6 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resetBtnActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="stopBtn">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Stop"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stopBtnActionPerformed"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JButton" name="executeBtn">
       <Properties>
         <Property name="text" type="java.lang.String" value="Execute"/>
@@ -119,14 +104,6 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
     </Container>
-    <Component class="javax.swing.JButton" name="speedBtn">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Slow"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="speedBtnActionPerformed"/>
-      </Events>
-    </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
       <AuxValues>
         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>

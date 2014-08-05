@@ -27,7 +27,7 @@ public class Robot implements Runnable
 	
 	//What factor to divide the wait time between instructions by. 
     //Set to 1 for default (no modifier). 2 = twice as fast, etc 
-	public static int speedModifier = 1;
+	public static int speedModifier = 2;
 	
 	private ArrayList<SonarSensor> sonars = new ArrayList<SonarSensor>();
 	
@@ -42,6 +42,11 @@ public class Robot implements Runnable
 
 		b = new Block(20, 30, centerX, centerY, angle, sim);
 	}
+        
+        public boolean checkRobotInFinished()
+        {
+            return b.checkInFinish();
+        }
 
 	public Block getBlock() 
 	{
@@ -289,9 +294,6 @@ public class Robot implements Runnable
             RobotSimulator.println("Stopping");
 		status = 's';
                 robotThread = null;
-
-                //Used to determine if we have finished maze
-                b.checkCollision();
 	}
 
     //Main method of the robot-- determines what to do based on status code

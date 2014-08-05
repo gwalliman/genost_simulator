@@ -1,6 +1,7 @@
 package robotsimulator.worldobject;
 
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -8,9 +9,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import robotsimulator.RobotSimulator;
 
 import robotsimulator.Simulator;
 import robotsimulator.world.CellType;
@@ -224,7 +229,30 @@ public class Block
                         sim.mainApp.simPanelNb.stopExecution();
 		}
 	}
-	
+        
+        public boolean checkInFinish()
+        {
+            Point[][] worldPoints = sim.getWorld().getWorldPoints();
+            ArrayList<Point> pfront = World.getLine(getX0(), getY0(), getX1(), getY1());
+            ArrayList<Point> pleft = World.getLine(getX0(), getY0(), getX2(), getY2());
+            ArrayList<Point> pright  = World.getLine(getX1(), getY1(), getX3(), getY3());
+            ArrayList<Point> prear = World.getLine(getX3(), getY3(), getX2(), getY2());
+            
+            return checkEdgeInFinish(pfront, worldPoints) || checkEdgeInFinish(pleft, worldPoints) || checkEdgeInFinish(pright, worldPoints) || checkEdgeInFinish(prear, worldPoints);
+        }
+        
+        private boolean checkEdgeInFinish(ArrayList<Point> points, Point[][] worldPoints) 
+	{
+            for(Point p : points)
+            {
+                if(worldPoints[p.getX()][p.getY()].isOccupied() && worldPoints[p.getX()][p.getY()].getOccupier().getCellType().isFinish())
+                {
+                    return true;
+                }
+            }
+            return false;
+	}
+        
 	public boolean checkCollision() 
 	{
 		Point[][] worldPoints = sim.getWorld().getWorldPoints();
@@ -240,32 +268,31 @@ public class Block
 	{
             for(Point p : points)
             {
-                if(p.getX() < 0 || p.getX() >= sim.getWorld().getWidth() || p.getY() < 0 || p.getY() >= sim.getWorld().getHeight())
+                if((p.getX() < 0 || p.getX() >= sim.getWorld().getWidth() || p.getY() < 0 || p.getY() >= sim.getWorld().getHeight()) || (worldPoints[p.getX()][p.getY()].isOccupied() && worldPoints[p.getX()][p.getY()].getOccupier().getCellType().doesClip()))
                 {
-                    return true;
-                }
-
-                if(worldPoints[p.getX()][p.getY()].isOccupied() && worldPoints[p.getX()][p.getY()].getOccupier().getCellType().doesClip())
-                {
-                    sim.checkFinished(worldPoints[p.getX()][p.getY()].getOccupier().getCellType());
+                    sim.mainApp.collided = true;
+                    RobotSimulator.println("Whoops, you crashed!");
+                    JPanel panel = new JPanel(new GridLayout(0, 1));
+                    panel.add(new JLabel("Whoops, you crashed!"));
+                    JOptionPane.showMessageDialog(null, "You crashed!", "Whoops!", JOptionPane.INFORMATION_MESSAGE);
                     return true;
                 }
                 else
                 {
-                    if(worldPoints[p.getX()][p.getY()].getOccupier().getCellType().isCoin())
+                    
+                    if(sim.mainApp.finishModes[sim.mainApp.finishMode] == "DRIVE_TO_FINISH" && worldPoints[p.getX()][p.getY()].isOccupied() && worldPoints[p.getX()][p.getY()].getOccupier().getCellType().isFinish() && !sim.finished)
+                    {
+                        sim.finishMaze();
+                        return false;
+                    }
+                    
+                    if(worldPoints[p.getX()][p.getY()].isOccupied() && worldPoints[p.getX()][p.getY()].getOccupier().getCellType().isCoin())
                     {
                         worldPoints[p.getX()][p.getY()].getOccupier().setCellType(
                                 worldPoints[p.getX()][p.getY()].getOccupier().getCellType().getCoinUnder()
                         );
                         sim.mainApp.numCoins--;
-                        
-                        //Check if we are finished after each coin
-                        sim.checkFinished(worldPoints[p.getX()][p.getY()].getOccupier().getCellType());
                         return false;
-                    }
-                    else
-                    {
-                        sim.checkFinished(worldPoints[p.getX()][p.getY()].getOccupier().getCellType());
                     }
                 }
             }

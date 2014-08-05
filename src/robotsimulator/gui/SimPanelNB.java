@@ -108,9 +108,9 @@ public class SimPanelNB extends javax.swing.JPanel {
         //End crappy hack
         
         mazeComboBox.setSelectedItem(main.mazeId);
-        outputTextArea.setEditable(false);
+        //outputTextArea.setEditable(false);
         outputTextArea.setBackground(Color.LIGHT_GRAY);
-        consoleTextArea.setEditable(false);
+        //consoleTextArea.setEditable(false);
         consoleTextArea.setBackground(Color.LIGHT_GRAY);
         guiStarted = true;
     }
@@ -148,9 +148,9 @@ public class SimPanelNB extends javax.swing.JPanel {
             executor.cancel(true);
 
             if (r != null)
-                    r.stop();
-        }       
-
+                r.stop();
+        }
+      
         sim.stop();
         executor = null;
 
@@ -247,10 +247,8 @@ public class SimPanelNB extends javax.swing.JPanel {
 
         mazeComboBox = new JComboBox(main.getMazesFromWeb());
         resetBtn = new javax.swing.JButton();
-        stopBtn = new javax.swing.JButton();
         executeBtn = new javax.swing.JButton();
         stageScrollPane = new javax.swing.JScrollPane();
-        speedBtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         outputTextArea = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -273,13 +271,6 @@ public class SimPanelNB extends javax.swing.JPanel {
             }
         });
 
-        stopBtn.setText("Stop");
-        stopBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stopBtnActionPerformed(evt);
-            }
-        });
-
         executeBtn.setText("Execute");
         executeBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -289,13 +280,6 @@ public class SimPanelNB extends javax.swing.JPanel {
 
         stageScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         stageScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-        speedBtn.setText("Slow");
-        speedBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                speedBtnActionPerformed(evt);
-            }
-        });
 
         outputTextArea.setColumns(20);
         outputTextArea.setRows(5);
@@ -323,15 +307,11 @@ public class SimPanelNB extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(executeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(stopBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(105, 105, 105)
                         .addComponent(resetBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(speedBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -342,9 +322,7 @@ public class SimPanelNB extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(resetBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(stopBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(executeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(speedBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(executeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(mazeComboBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -373,7 +351,8 @@ public class SimPanelNB extends javax.swing.JPanel {
         {
             //Begin execution, enable the stopBtn, and disable ourselves
             executeBtn.setEnabled(false);
-            stopBtn.setEnabled(true);
+            //stopBtn.setEnabled(true);
+            resetBtn.setEnabled(false);
             sim.running = true;
 
             //Begin running the simulation
@@ -396,6 +375,10 @@ public class SimPanelNB extends javax.swing.JPanel {
                     {
                         r.execute();
                     }
+                    else
+                    {
+                        RobotSimulator.println("ERROR: Robot Interpreter is not ready!");
+                    }
                     return null;
                 }
 
@@ -405,10 +388,28 @@ public class SimPanelNB extends javax.swing.JPanel {
                     RobotSimulator.println("done: " + this.hashCode());
 
                     executeBtn.setEnabled(true);
-                    stopBtn.setEnabled(false);
+                    //stopBtn.setEnabled(false);
                     r.stop();
                     r.removeRobotListener(sim);		//--Need to tell it to stop listening to the interpreter
                     sim.stop();
+                    
+                    switch(sim.mainApp.finishModes[sim.mainApp.finishMode])
+                    {
+                        case "DRIVE_TO_FINISH_AND_STOP":
+                            if(!sim.mainApp.collided && sim.getRobot().checkRobotInFinished())
+                            {
+                                sim.finishMaze();
+                            }
+                            break;
+                        case "COLLECT_ALL_COINS":
+                            if(!sim.mainApp.collided && sim.mainApp.numCoins <= 0 && !sim.finished)
+                            {
+                                sim.finishMaze();
+                            }
+                            break;
+                    }
+                    
+                    resetBtn.setEnabled(true);
                 }
             };
             executor.execute();
@@ -419,39 +420,25 @@ public class SimPanelNB extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_executeBtnActionPerformed
 
-    private void stopBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopBtnActionPerformed
-        //Stop execution, enable the runBtn, and disable ourselves
-        stopExecution();
-    }//GEN-LAST:event_stopBtnActionPerformed
-
     private void resetBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetBtnActionPerformed
         //Stop execution, and reload the maze
         stopExecution();
-
+        if(sim != null)
+        {
+            sim.finished = false;
+        }
+        
+        if(main != null)
+        {
+            main.collided = false;
+        }
+        
         if (main.mazeId != null)
         {
             sim.importStage(main.mazeXml);
             reinitializeSensors();
         }
     }//GEN-LAST:event_resetBtnActionPerformed
-
-    private void speedBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speedBtnActionPerformed
-        //Toggle between high and low speeds for robot
-        //Speed is a multiplier-- e.g. sM=2 is twice as fast as sM=1
-        
-        if (highSpeed)
-        {
-                highSpeed = false;
-                Robot.speedModifier = 1;
-                speedBtn.setText("Slow");
-        }
-        else
-        {
-                highSpeed = true;
-                Robot.speedModifier = 2;
-                speedBtn.setText("Fast");
-        }
-    }//GEN-LAST:event_speedBtnActionPerformed
 
     public void printToConsole(String message)
     {
@@ -468,9 +455,7 @@ public class SimPanelNB extends javax.swing.JPanel {
     private javax.swing.JTextArea outputTextArea;
     private javax.swing.JButton resetBtn;
     private javax.swing.JTextArea sonarTextArea;
-    private javax.swing.JButton speedBtn;
     private javax.swing.JScrollPane stageScrollPane;
-    private javax.swing.JButton stopBtn;
     // End of variables declaration//GEN-END:variables
 
     public void startSensorThread()

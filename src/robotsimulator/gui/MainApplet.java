@@ -74,9 +74,11 @@ public class MainApplet extends JApplet implements ChangeListener
     public String codeId;
     public String username;
     public String password;
+    
+    public boolean collided = false;
 
     //If true, this is a student build, and we should disable the maze builder, arrow keys, etc.
-    public boolean studentBuild = true;
+    public boolean studentBuild = false;
 
     //Robot image
     public static ImageIcon robotSprite;
@@ -151,7 +153,7 @@ public class MainApplet extends JApplet implements ChangeListener
             mazeBuilderNb.preLaunchSetup();
         }
         
-        if(!studentBuild)
+        //if(!studentBuild)
             setKeyBindings();
         RobotSimulator.println("We are go for launch");
     }

@@ -1,6 +1,0 @@
-{
-	vardecl int x;
-	assign x  = int 5;
-
-
-}
